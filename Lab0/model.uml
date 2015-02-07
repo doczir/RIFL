@@ -5,16 +5,12 @@
     <edge xmi:type="uml:ControlFlow" xmi:id="_i9jPcK7QEeSezf5qoJBmmA" target="_WT0u0K7QEeSezf5qoJBmmA" source="_djZ68K7QEeSezf5qoJBmmA"/>
     <edge xmi:type="uml:ControlFlow" xmi:id="_kQdBwK7QEeSezf5qoJBmmA" target="_fM95wK7QEeSezf5qoJBmmA" source="_djZ68K7QEeSezf5qoJBmmA"/>
     <edge xmi:type="uml:ControlFlow" xmi:id="_ccmOcK7REeSezf5qoJBmmA" target="_2uGo0K7QEeSezf5qoJBmmA" source="_X0YtMK7REeSezf5qoJBmmA"/>
-    <edge xmi:type="uml:ControlFlow" xmi:id="_lpqa8K7REeSezf5qoJBmmA" target="_2uGo0K7QEeSezf5qoJBmmA" source="_jqZ48K7REeSezf5qoJBmmA"/>
     <edge xmi:type="uml:ControlFlow" xmi:id="_qKW-8K7REeSezf5qoJBmmA" target="_gxr_YK7REeSezf5qoJBmmA" source="_2uGo0K7QEeSezf5qoJBmmA"/>
     <edge xmi:type="uml:ControlFlow" xmi:id="_wdUx0K7REeSezf5qoJBmmA" name="unable to reserve" target="_yE7zYK7SEeSezf5qoJBmmA" source="_gxr_YK7REeSezf5qoJBmmA"/>
     <edge xmi:type="uml:ControlFlow" xmi:id="_FAgiAK7SEeSezf5qoJBmmA" target="_-ZM20K7REeSezf5qoJBmmA" source="_5uCIMK7REeSezf5qoJBmmA"/>
     <edge xmi:type="uml:ControlFlow" xmi:id="_4m6SoK7SEeSezf5qoJBmmA" target="_yE7zYK7SEeSezf5qoJBmmA" source="_zUv1cK7SEeSezf5qoJBmmA"/>
     <edge xmi:type="uml:ControlFlow" xmi:id="_5PCpoK7SEeSezf5qoJBmmA" target="_KS7v0K7QEeSezf5qoJBmmA" source="_yE7zYK7SEeSezf5qoJBmmA"/>
     <edge xmi:type="uml:ControlFlow" xmi:id="_T5HfkK7TEeSezf5qoJBmmA" source="_5uCIMK7REeSezf5qoJBmmA"/>
-    <edge xmi:type="uml:ControlFlow" xmi:id="_VnxZwK7TEeSezf5qoJBmmA" target="_GI2DEK7SEeSezf5qoJBmmA" source="_5uCIMK7REeSezf5qoJBmmA"/>
-    <edge xmi:type="uml:ControlFlow" xmi:id="_ZwVKkK7TEeSezf5qoJBmmA" target="_YWpa0K7TEeSezf5qoJBmmA" source="_GI2DEK7SEeSezf5qoJBmmA"/>
-    <edge xmi:type="uml:ControlFlow" xmi:id="_aDxD8K7TEeSezf5qoJBmmA" name="delivery" target="_Hw37YK7TEeSezf5qoJBmmA" source="_YWpa0K7TEeSezf5qoJBmmA"/>
     <edge xmi:type="uml:ControlFlow" xmi:id="_0YswUK7TEeSezf5qoJBmmA" name="reservation successful" target="_zEFt0K7TEeSezf5qoJBmmA" source="_gxr_YK7REeSezf5qoJBmmA"/>
     <edge xmi:type="uml:ControlFlow" xmi:id="_07TuIK7TEeSezf5qoJBmmA" target="_tH3nAK7TEeSezf5qoJBmmA" source="_zEFt0K7TEeSezf5qoJBmmA"/>
     <edge xmi:type="uml:ControlFlow" xmi:id="_1aWakK7TEeSezf5qoJBmmA" target="_5uCIMK7REeSezf5qoJBmmA" source="_t_1w0K7TEeSezf5qoJBmmA"/>
@@ -25,6 +21,10 @@
     <edge xmi:type="uml:ControlFlow" xmi:id="_Lj8H4K7UEeSezf5qoJBmmA" target="_Kh_isK7UEeSezf5qoJBmmA" source="_AhHToK7UEeSezf5qoJBmmA"/>
     <edge xmi:type="uml:ControlFlow" xmi:id="_L3IJoK7UEeSezf5qoJBmmA" name="billing successful" target="_Fgrk8K7UEeSezf5qoJBmmA" source="_Kh_isK7UEeSezf5qoJBmmA"/>
     <edge xmi:type="uml:ControlFlow" xmi:id="_PUQX0K7UEeSezf5qoJBmmA" name="billing failed" target="_zEFt0K7TEeSezf5qoJBmmA" source="_Kh_isK7UEeSezf5qoJBmmA"/>
+    <edge xmi:type="uml:ControlFlow" xmi:id="_w8YWQK7aEeSezf5qoJBmmA" target="_2uGo0K7QEeSezf5qoJBmmA" source="_YSZUUK7QEeSezf5qoJBmmA"/>
+    <edge xmi:type="uml:ControlFlow" xmi:id="_3aV4MK7aEeSezf5qoJBmmA" target="_yEcxkK7aEeSezf5qoJBmmA" source="_5uCIMK7REeSezf5qoJBmmA"/>
+    <edge xmi:type="uml:ControlFlow" xmi:id="_-H0c0K7aEeSezf5qoJBmmA" target="_YWpa0K7TEeSezf5qoJBmmA" source="_6SdU0K7aEeSezf5qoJBmmA"/>
+    <edge xmi:type="uml:ControlFlow" xmi:id="_-9tjAK7aEeSezf5qoJBmmA" name="delivery" target="_58r5IK7aEeSezf5qoJBmmA" source="_YWpa0K7TEeSezf5qoJBmmA"/>
     <node xmi:type="uml:OpaqueAction" xmi:id="_KS7v0K7QEeSezf5qoJBmmA" name="Travel info" incoming="_5PCpoK7SEeSezf5qoJBmmA">
       <outputValue xmi:type="uml:OutputPin" xmi:id="_OBnoEK7QEeSezf5qoJBmmA" name="travel info" outgoing="_iAApIK7QEeSezf5qoJBmmA">
         <upperBound xmi:type="uml:LiteralInteger" xmi:id="_OBnoEa7QEeSezf5qoJBmmA" value="1"/>
@@ -35,28 +35,36 @@
         <upperBound xmi:type="uml:LiteralInteger" xmi:id="_X0ZUQK7REeSezf5qoJBmmA" value="1"/>
       </outputValue>
     </node>
-    <node xmi:type="uml:OpaqueAction" xmi:id="_YSZUUK7QEeSezf5qoJBmmA" name="Reservation Check">
+    <node xmi:type="uml:OpaqueAction" xmi:id="_YSZUUK7QEeSezf5qoJBmmA" name="Reservation Check" outgoing="_w8YWQK7aEeSezf5qoJBmmA">
       <inputValue xmi:type="uml:InputPin" xmi:id="_fM95wK7QEeSezf5qoJBmmA" name="travel info" incoming="_kQdBwK7QEeSezf5qoJBmmA">
         <upperBound xmi:type="uml:LiteralInteger" xmi:id="_fM-g0K7QEeSezf5qoJBmmA" value="1"/>
       </inputValue>
-      <outputValue xmi:type="uml:OutputPin" xmi:id="_jqZ48K7REeSezf5qoJBmmA" name="travel info" outgoing="_lpqa8K7REeSezf5qoJBmmA">
-        <upperBound xmi:type="uml:LiteralInteger" xmi:id="_jqagAK7REeSezf5qoJBmmA" value="1"/>
-      </outputValue>
     </node>
     <node xmi:type="uml:ForkNode" xmi:id="_djZ68K7QEeSezf5qoJBmmA" name="ForkNode1" incoming="_iAApIK7QEeSezf5qoJBmmA" outgoing="_i9jPcK7QEeSezf5qoJBmmA _kQdBwK7QEeSezf5qoJBmmA"/>
-    <node xmi:type="uml:JoinNode" xmi:id="_2uGo0K7QEeSezf5qoJBmmA" name="JoinNode1" incoming="_ccmOcK7REeSezf5qoJBmmA _lpqa8K7REeSezf5qoJBmmA" outgoing="_qKW-8K7REeSezf5qoJBmmA"/>
+    <node xmi:type="uml:JoinNode" xmi:id="_2uGo0K7QEeSezf5qoJBmmA" name="JoinNode1" incoming="_ccmOcK7REeSezf5qoJBmmA _w8YWQK7aEeSezf5qoJBmmA" outgoing="_qKW-8K7REeSezf5qoJBmmA"/>
     <node xmi:type="uml:OpaqueAction" xmi:id="_QGDvkK7REeSezf5qoJBmmA" name="Payment Check" outgoing="_CKhhcK7UEeSezf5qoJBmmA">
       <inputValue xmi:type="uml:InputPin" xmi:id="_-ZM20K7REeSezf5qoJBmmA" name="billing info" incoming="_FAgiAK7SEeSezf5qoJBmmA">
         <upperBound xmi:type="uml:LiteralInteger" xmi:id="_-ZNd4K7REeSezf5qoJBmmA" value="1"/>
       </inputValue>
     </node>
     <node xmi:type="uml:DecisionNode" xmi:id="_gxr_YK7REeSezf5qoJBmmA" name="DecisionNode1" incoming="_qKW-8K7REeSezf5qoJBmmA" outgoing="_wdUx0K7REeSezf5qoJBmmA _0YswUK7TEeSezf5qoJBmmA"/>
-    <node xmi:type="uml:ForkNode" xmi:id="_5uCIMK7REeSezf5qoJBmmA" name="ForkNode2" incoming="_1aWakK7TEeSezf5qoJBmmA" outgoing="_FAgiAK7SEeSezf5qoJBmmA _T5HfkK7TEeSezf5qoJBmmA _VnxZwK7TEeSezf5qoJBmmA"/>
-    <node xmi:type="uml:OpaqueAction" xmi:id="_GI2DEK7SEeSezf5qoJBmmA" name="Select mode of recipt" incoming="_VnxZwK7TEeSezf5qoJBmmA" outgoing="_ZwVKkK7TEeSezf5qoJBmmA"/>
+    <node xmi:type="uml:ForkNode" xmi:id="_5uCIMK7REeSezf5qoJBmmA" name="ForkNode2" incoming="_1aWakK7TEeSezf5qoJBmmA" outgoing="_FAgiAK7SEeSezf5qoJBmmA _T5HfkK7TEeSezf5qoJBmmA _3aV4MK7aEeSezf5qoJBmmA"/>
+    <node xmi:type="uml:OpaqueAction" xmi:id="_GI2DEK7SEeSezf5qoJBmmA" name="Select mode of recipt">
+      <inputValue xmi:type="uml:InputPin" xmi:id="_yEcxkK7aEeSezf5qoJBmmA" name="billing info" incoming="_3aV4MK7aEeSezf5qoJBmmA">
+        <upperBound xmi:type="uml:LiteralInteger" xmi:id="_yEdYoK7aEeSezf5qoJBmmA" value="1"/>
+      </inputValue>
+      <outputValue xmi:type="uml:OutputPin" xmi:id="_6SdU0K7aEeSezf5qoJBmmA" name="billing info" outgoing="_-H0c0K7aEeSezf5qoJBmmA">
+        <upperBound xmi:type="uml:LiteralInteger" xmi:id="_6SdU0a7aEeSezf5qoJBmmA" value="1"/>
+      </outputValue>
+    </node>
     <node xmi:type="uml:MergeNode" xmi:id="_yE7zYK7SEeSezf5qoJBmmA" name="MergeNode1" incoming="_4m6SoK7SEeSezf5qoJBmmA _wdUx0K7REeSezf5qoJBmmA" outgoing="_5PCpoK7SEeSezf5qoJBmmA"/>
     <node xmi:type="uml:InitialNode" xmi:id="_zUv1cK7SEeSezf5qoJBmmA" name="InitialNode1" outgoing="_4m6SoK7SEeSezf5qoJBmmA"/>
-    <node xmi:type="uml:OpaqueAction" xmi:id="_Hw37YK7TEeSezf5qoJBmmA" name="Delivery address" incoming="_aDxD8K7TEeSezf5qoJBmmA" outgoing="_5fQacK7TEeSezf5qoJBmmA"/>
-    <node xmi:type="uml:DecisionNode" xmi:id="_YWpa0K7TEeSezf5qoJBmmA" name="DecisionNode2" incoming="_ZwVKkK7TEeSezf5qoJBmmA" outgoing="_aDxD8K7TEeSezf5qoJBmmA _6NWPgK7TEeSezf5qoJBmmA"/>
+    <node xmi:type="uml:OpaqueAction" xmi:id="_Hw37YK7TEeSezf5qoJBmmA" name="Delivery address" outgoing="_5fQacK7TEeSezf5qoJBmmA">
+      <inputValue xmi:type="uml:InputPin" xmi:id="_58r5IK7aEeSezf5qoJBmmA" name="billing info" incoming="_-9tjAK7aEeSezf5qoJBmmA">
+        <upperBound xmi:type="uml:LiteralInteger" xmi:id="_58r5Ia7aEeSezf5qoJBmmA" value="1"/>
+      </inputValue>
+    </node>
+    <node xmi:type="uml:DecisionNode" xmi:id="_YWpa0K7TEeSezf5qoJBmmA" name="DecisionNode2" incoming="_-H0c0K7aEeSezf5qoJBmmA" outgoing="_6NWPgK7TEeSezf5qoJBmmA _-9tjAK7aEeSezf5qoJBmmA"/>
     <node xmi:type="uml:OpaqueAction" xmi:id="_q0JQ4K7TEeSezf5qoJBmmA" name="Payment info">
       <inputValue xmi:type="uml:InputPin" xmi:id="_tH3nAK7TEeSezf5qoJBmmA" name="billing info" incoming="_07TuIK7TEeSezf5qoJBmmA">
         <upperBound xmi:type="uml:LiteralInteger" xmi:id="_tH4OEK7TEeSezf5qoJBmmA" value="1"/>
@@ -78,15 +86,21 @@
     <ownedAttribute xmi:type="uml:Property" xmi:id="_C3XnEK7ZEeSezf5qoJBmmA" name="creditCardNr" visibility="private">
       <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
     </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_ZS2gMK7aEeSezf5qoJBmmA" name="billingName" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
     <ownedAttribute xmi:type="uml:Property" xmi:id="_MsIFsK7ZEeSezf5qoJBmmA" name="billingAddress" visibility="private">
       <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
     </ownedAttribute>
     <ownedAttribute xmi:type="uml:Property" xmi:id="_OmkZIK7ZEeSezf5qoJBmmA" name="deliveryAddress" visibility="private">
       <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
     </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_TxskwK7aEeSezf5qoJBmmA" name="inFullDischarge" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/JavaPrimitiveTypes.library.uml#boolean"/>
+    </ownedAttribute>
   </packagedElement>
   <packagedElement xmi:type="uml:Class" xmi:id="_Po9nEK7VEeSezf5qoJBmmA" name="TravelInfo">
-    <ownedAttribute xmi:type="uml:Property" xmi:id="_4mDkwK7XEeSezf5qoJBmmA" name="billingInfo" type="_OnpUAK7VEeSezf5qoJBmmA" aggregation="composite" association="_4mEL0K7XEeSezf5qoJBmmA">
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_4mDkwK7XEeSezf5qoJBmmA" name="billingInfo" visibility="private" type="_OnpUAK7VEeSezf5qoJBmmA" aggregation="composite" association="_4mEL0K7XEeSezf5qoJBmmA">
       <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_4mDkwa7XEeSezf5qoJBmmA" value="1"/>
       <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_4mDkwq7XEeSezf5qoJBmmA" value="1"/>
     </ownedAttribute>
@@ -107,6 +121,9 @@
     </ownedAttribute>
     <ownedAttribute xmi:type="uml:Property" xmi:id="_6B1w0K7YEeSezf5qoJBmmA" name="nrOfPassengers" visibility="private">
       <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/JavaPrimitiveTypes.library.uml#int"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_KvQ68K7aEeSezf5qoJBmmA" name="reservationAccepted" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/JavaPrimitiveTypes.library.uml#boolean"/>
     </ownedAttribute>
   </packagedElement>
   <packagedElement xmi:type="uml:Association" xmi:id="_4mEL0K7XEeSezf5qoJBmmA" memberEnd="_4mEL0a7XEeSezf5qoJBmmA _4mDkwK7XEeSezf5qoJBmmA">
