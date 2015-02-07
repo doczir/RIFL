@@ -19,8 +19,8 @@
     <edge xmi:type="uml:ControlFlow" xmi:id="_BgP1YK7UEeSezf5qoJBmmA" target="_AhHToK7UEeSezf5qoJBmmA" source="_4oM2oK7TEeSezf5qoJBmmA"/>
     <edge xmi:type="uml:ControlFlow" xmi:id="_CKhhcK7UEeSezf5qoJBmmA" target="_AhHToK7UEeSezf5qoJBmmA" source="_QGDvkK7REeSezf5qoJBmmA"/>
     <edge xmi:type="uml:ControlFlow" xmi:id="_Lj8H4K7UEeSezf5qoJBmmA" target="_Kh_isK7UEeSezf5qoJBmmA" source="_AhHToK7UEeSezf5qoJBmmA"/>
-    <edge xmi:type="uml:ControlFlow" xmi:id="_L3IJoK7UEeSezf5qoJBmmA" name="billing successful" target="_Fgrk8K7UEeSezf5qoJBmmA" source="_Kh_isK7UEeSezf5qoJBmmA"/>
-    <edge xmi:type="uml:ControlFlow" xmi:id="_PUQX0K7UEeSezf5qoJBmmA" name="billing failed" target="_zEFt0K7TEeSezf5qoJBmmA" source="_Kh_isK7UEeSezf5qoJBmmA"/>
+    <edge xmi:type="uml:ControlFlow" xmi:id="_L3IJoK7UEeSezf5qoJBmmA" name="payment successful" target="_Fgrk8K7UEeSezf5qoJBmmA" source="_Kh_isK7UEeSezf5qoJBmmA"/>
+    <edge xmi:type="uml:ControlFlow" xmi:id="_PUQX0K7UEeSezf5qoJBmmA" name="payment failed" target="_zEFt0K7TEeSezf5qoJBmmA" source="_Kh_isK7UEeSezf5qoJBmmA"/>
     <edge xmi:type="uml:ControlFlow" xmi:id="_w8YWQK7aEeSezf5qoJBmmA" target="_2uGo0K7QEeSezf5qoJBmmA" source="_YSZUUK7QEeSezf5qoJBmmA"/>
     <edge xmi:type="uml:ControlFlow" xmi:id="_3aV4MK7aEeSezf5qoJBmmA" target="_yEcxkK7aEeSezf5qoJBmmA" source="_5uCIMK7REeSezf5qoJBmmA"/>
     <edge xmi:type="uml:ControlFlow" xmi:id="_-H0c0K7aEeSezf5qoJBmmA" target="_YWpa0K7TEeSezf5qoJBmmA" source="_6SdU0K7aEeSezf5qoJBmmA"/>
