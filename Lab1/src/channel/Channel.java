@@ -4,46 +4,55 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 @SuppressWarnings("unchecked")
 public class Channel {
+	
+	private ExecutorService threadPool;
 
-    public <Handler extends Consumer<Message>, Message> void add(Class<? extends Message> msgType, Handler handler) {
-        getInstance(msgType).add(handler);
-    }
+	public Channel() {
+		threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+	}
 
-    public <Message> void broadcast(Message msg) {
-        getInstance(msg.getClass()).broadcast(msg);
-    }
+	public <Handler extends Consumer<Message>, Message> void add(
+			Class<? extends Message> msgType, Handler handler) {
+		getInstance(msgType).add(handler);
+	}
 
-    private InternalChannel getInstance(Class<?> clazz) {
-        InternalChannel instance = instances.get(clazz);
-        if (instance == null) {
-            instance = new InternalChannel();
-            instances.put(clazz, instance);
-        }
-        return instance;
-    }
+	public <Message> void broadcast(Message msg) {
+		getInstance(msg.getClass()).broadcast(msg);
+	}
 
-    private final Map<Class, InternalChannel<?>> instances = new HashMap<>();
+	private InternalChannel getInstance(Class<?> clazz) {
+		InternalChannel instance = instances.get(clazz);
+		if (instance == null) {
+			instance = new InternalChannel();
+			instances.put(clazz, instance);
+		}
+		return instance;
+	}
 
-    private class InternalChannel<Message> {
+	private final Map<Class, InternalChannel<?>> instances = new HashMap<>();
 
-        private final List<Consumer<Message>> handlers;
+	private class InternalChannel<Message> {
 
-        private InternalChannel() {
-            handlers = new ArrayList<>();
-        }
+		private final List<Consumer<Message>> handlers;
 
-        public <Handler extends Consumer<Message>> void add(Handler handler) {
-            handlers.add(handler);
-        }
+		private InternalChannel() {
+			handlers = new ArrayList<>();
+		}
 
-        public void broadcast(Message msg) {
-            for (Consumer<Message> handler : handlers) {
-                handler.accept(msg);
-            }
-        }
-    }
+		public <Handler extends Consumer<Message>> void add(Handler handler) {
+			handlers.add(handler);
+		}
+
+		public void broadcast(Message msg) {
+			for (Consumer<Message> handler : handlers) {
+				threadPool.submit(() -> handler.accept(msg));
+			}
+		}
+	}
 }

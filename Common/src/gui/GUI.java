@@ -10,6 +10,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import model.BillingInfo;
+import model.TravelInfo;
+import node.Node;
+
 public class GUI {
 
 	private JFrame frame = null;
