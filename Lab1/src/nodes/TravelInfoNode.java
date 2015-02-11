@@ -35,13 +35,13 @@ public class TravelInfoNode implements Node {
 			travelInfo.setReturnDate(Generator.generateDate(random, Timestamp
 					.valueOf("2014-01-01 00:00:00").getTime(), Timestamp
 					.valueOf("2014-12-31 00:58:00").getTime()));
+			gui.notify(travelInfo, null);
 		});
 	}
 
 	@Override
 	public void next() {
 		channel.broadcast(new TravelInfoNodeDone(travelInfo));
-		gui.notify(travelInfo, null);
 	}
 
 	@Override
