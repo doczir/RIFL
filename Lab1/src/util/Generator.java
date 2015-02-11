@@ -20,4 +20,14 @@ public class Generator {
 		long date = begin + (long) (Math.random() * diff);
 		return new Date(date);
 	}
+	
+	public static boolean generateBoolean() {
+		double d = Math.random();
+		
+		if (d >= 0.5f) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }
