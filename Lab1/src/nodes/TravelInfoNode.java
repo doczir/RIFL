@@ -33,7 +33,6 @@ public class TravelInfoNode extends AbstractNode {
 					e.printStackTrace();
 				}
 				gui.enable();
-				System.out.println("Yay");
 				travelInfo = new TravelInfo();
 				travelInfo.setId(random.nextInt());
 				travelInfo.setDestination(Generator.generateString(random, 10));

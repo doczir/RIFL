@@ -57,6 +57,8 @@ public class BillingInfoNode extends AbstractNode {
 
 	@Override
 	public void next() {
+		gui.disable();
+		channel.broadcast(new BillingInfoNodeDone(billingInfo));
 		synchronized (lock) {
 			lock.notify();		
 		}

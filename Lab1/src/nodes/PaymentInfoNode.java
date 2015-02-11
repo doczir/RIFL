@@ -35,35 +35,37 @@ public class PaymentInfoNode extends AbstractNode {
 				e.printStackTrace();
 			}
 		});
-		
-		start(()->{
-			BillingInfoNodeDone msg = null;
-			try {
-				prnd.take();
-				msg = bind.take();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			billingInfo = msg.getBillingInfo();
-			
-			gui.notify(null, billingInfo);
-			gui.enable();
-			synchronized (lock) {
+
+		start(() -> {
+			while (true) {
+				BillingInfoNodeDone msg = null;
 				try {
-					lock.wait();
+					prnd.take();
+					msg = bind.take();
 				} catch (Exception e) {
 					e.printStackTrace();
+				}
+				billingInfo = msg.getBillingInfo();
+
+				gui.notify(null, billingInfo);
+				gui.enable();
+				synchronized (lock) {
+					try {
+						lock.wait();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		});
 	}
 
 	@Override
-	public void next() {		
+	public void next() {
+		gui.disable();
 		synchronized (lock) {
 			lock.notify();
 		}
-		gui.disable();
 	}
 
 }
