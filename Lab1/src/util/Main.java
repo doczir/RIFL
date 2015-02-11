@@ -1,5 +1,6 @@
 package util;
 
+import gui.GUI;
 import messages.Start;
 import nodes.TravelInfoNode;
 import channel.Channel;
@@ -10,6 +11,7 @@ public class Main {
 		Channel channel = new Channel();
 		
 		TravelInfoNode travelInfoNode = new TravelInfoNode(channel);
+		new GUI("TravelInfo", travelInfoNode);
 		
 		channel.broadcast(new Start());
 	}

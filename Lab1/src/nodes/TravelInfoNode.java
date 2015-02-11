@@ -1,5 +1,7 @@
 package nodes;
 
+import gui.GUI;
+
 import java.sql.Timestamp;
 import java.util.Random;
 
@@ -14,6 +16,7 @@ public class TravelInfoNode implements Node {
 
 	private Channel channel;
 	private TravelInfo travelInfo;
+	private GUI gui;
 
 	public TravelInfoNode(Channel channel) {
 		this.channel = channel;
@@ -38,11 +41,12 @@ public class TravelInfoNode implements Node {
 	@Override
 	public void next() {
 		channel.broadcast(new TravelInfoNodeDone(travelInfo));
+		gui.notify(travelInfo, null);
 	}
 
 	@Override
-	public void setGui() {
-
+	public void setGui(GUI gui) {
+		this.gui = gui;
 	}
 
 }

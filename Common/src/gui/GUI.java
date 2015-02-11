@@ -19,7 +19,7 @@ public class GUI {
 	private JFrame frame = null;
 	
 	
-	GUI(String title, Node node) {
+	public GUI(String title, Node node) {
 		frame = new JFrame(title);
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
