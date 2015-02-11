@@ -1,52 +1,71 @@
 package nodes;
 
-import gui.GUI;
-
 import java.sql.Timestamp;
 import java.util.Random;
 
 import messages.Start;
-import messages.TravelInfoNodeDone;
 import model.TravelInfo;
-import node.Node;
 import util.Generator;
 import channel.Channel;
 
-public class TravelInfoNode implements Node {
+public class TravelInfoNode extends AbstractNode {
 
-	private Channel channel;
 	private TravelInfo travelInfo;
-	private GUI gui;
 
 	public TravelInfoNode(Channel channel) {
-		this.channel = channel;
+		super(channel);
 
 		Random random = new Random();
 
 		channel.add(Start.class, (msg) -> {
-			travelInfo = new TravelInfo();
-			travelInfo.setId(random.nextInt());
-			travelInfo.setDestination(Generator.generateString(random, 10));
-			travelInfo.setOrigin(Generator.generateString(random, 10));
-			travelInfo.setNrOfPassengers(random.nextInt());
-			travelInfo.setTravelDate(Generator.generateDate(random, Timestamp
-					.valueOf("2013-01-01 00:00:00").getTime(), Timestamp
-					.valueOf("2013-12-31 00:58:00").getTime()));
-			travelInfo.setReturnDate(Generator.generateDate(random, Timestamp
-					.valueOf("2014-01-01 00:00:00").getTime(), Timestamp
-					.valueOf("2014-12-31 00:58:00").getTime()));
-			gui.notify(travelInfo, null);
+			try {
+				queue.put(msg);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+
+		start(() -> {
+			while (true) {
+				try {
+					queue.take();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				gui.enable();
+				System.out.println("Yay");
+				travelInfo = new TravelInfo();
+				travelInfo.setId(random.nextInt());
+				travelInfo.setDestination(Generator.generateString(random, 10));
+				travelInfo.setOrigin(Generator.generateString(random, 10));
+				travelInfo.setNrOfPassengers(random.nextInt());
+				travelInfo.setTravelDate(Generator.generateDate(random,
+						Timestamp.valueOf("2013-01-01 00:00:00").getTime(),
+						Timestamp.valueOf("2013-12-31 00:58:00").getTime()));
+				travelInfo.setReturnDate(Generator.generateDate(random,
+						Timestamp.valueOf("2014-01-01 00:00:00").getTime(),
+						Timestamp.valueOf("2014-12-31 00:58:00").getTime()));
+				gui.notify(travelInfo, null);
+			}
 		});
 	}
 
 	@Override
 	public void next() {
 		channel.broadcast(new TravelInfoNodeDone(travelInfo));
+		channel.broadcast(new Start());
 	}
 
-	@Override
-	public void setGui(GUI gui) {
-		this.gui = gui;
-	}
+	public static class TravelInfoNodeDone {
+		private TravelInfo travelInfo;
 
+		public TravelInfoNodeDone(TravelInfo travelInfo) {
+			super();
+			this.travelInfo = travelInfo;
+		}
+
+		public TravelInfo getTravelInfo() {
+			return travelInfo;
+		}
+	}
 }

@@ -10,12 +10,6 @@ import java.util.function.Consumer;
 
 @SuppressWarnings("unchecked")
 public class Channel {
-	
-	private ExecutorService threadPool;
-
-	public Channel() {
-		threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-	}
 
 	public <Handler extends Consumer<Message>, Message> void add(
 			Class<? extends Message> msgType, Handler handler) {
@@ -51,7 +45,7 @@ public class Channel {
 
 		public void broadcast(Message msg) {
 			for (Consumer<Message> handler : handlers) {
-				threadPool.submit(() -> handler.accept(msg));
+				handler.accept(msg);
 			}
 		}
 	}
