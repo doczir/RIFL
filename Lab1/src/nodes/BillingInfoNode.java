@@ -62,4 +62,16 @@ public class BillingInfoNode extends AbstractNode {
 		}
 	}
 
+	public static class BillingInfoNodeDone {
+		BillingInfo billingInfo;
+
+		public BillingInfoNodeDone(BillingInfo billingInfo) {
+			super();
+			this.billingInfo = billingInfo;
+		}
+		
+		public BillingInfo getBillingInfo() {
+			return billingInfo;
+		}
+	}
 }

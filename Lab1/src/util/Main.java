@@ -2,6 +2,8 @@ package util;
 
 import gui.GUI;
 import messages.Start;
+import nodes.BillingInfoNode;
+import nodes.PaymentInfoNode;
 import nodes.ProcessReservationNode;
 import nodes.TravelInfoNode;
 import channel.Channel;
@@ -16,6 +18,8 @@ public class Main {
 		TravelInfoNode travelInfoNode = new TravelInfoNode(channel);
 		new GUI("TravelInfo", travelInfoNode);
 		new GUI("ProcessReservationNode", new ProcessReservationNode(channel));
+		new GUI("BillingInfoNode", new BillingInfoNode(channel));
+		new GUI("PaymentInfoNode", new PaymentInfoNode(channel));
 		
 		channel.broadcast(new Start());
 	}

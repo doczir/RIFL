@@ -50,8 +50,24 @@ public class ProcessReservationNode extends AbstractNode {
 
 	@Override
 	public void next() {
+		channel.broadcast(new ProcessReservationNodeDone(travelInfo));
 		synchronized (lock) {
 			lock.notify();		
+		}
+	}
+	
+	public static class ProcessReservationNodeDone {
+		TravelInfo travelInfo;
+		
+		public ProcessReservationNodeDone(TravelInfo travelInfo) {
+			super();
+			this.travelInfo = travelInfo;
+		}
+
+
+
+		public TravelInfo getTravelInfo() {
+			return travelInfo;
 		}
 	}
 
