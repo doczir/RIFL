@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.EventQueue;
 import java.awt.GridLayout;
 
 import javax.swing.JButton;
@@ -17,9 +18,24 @@ import node.Node;
 public class GUI {
 
 	private JFrame frame = null;
+	private JTextField textField_id;
+	private JTextField textField_origin;
+	private JTextField textField_destination;
+	private JTextField textField_tDate;
+	private JTextField textField_rDate;
+	private JTextField textField_nrOfPass;
+	private JTextField textField_reservAccepted;
+	private JTextField textField_ccNumber;
+	private JTextField textField_ccOwner;
+	private JTextField textField_billingName;
+	private JTextField textField_billingAddress;
+	private JTextField textField_deliveryAddress;
+	private JTextField textField_inFullDischarge;
 	
 	
 	public GUI(String title, Node node) {
+		node.setGui(this);
+		
 		frame = new JFrame(title);
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -28,46 +44,45 @@ public class GUI {
 		
 		JPanel panel = null;
 		JLabel label = null;
-		JTextField textField = null;
 		
 		/* Create TravelInfo view */
 		panel = new JPanel();
 		panel.setLayout(new GridLayout(7, 2));
 		
 		label = new JLabel("ID");
-		textField = new JTextField();
+		textField_id = new JTextField();
 		panel.add(label);
-		panel.add(textField);
+		panel.add(textField_id);
 		
 		label = new JLabel("Origin");
-		textField = new JTextField();
+		textField_origin = new JTextField();
 		panel.add(label);
-		panel.add(textField);
+		panel.add(textField_origin);
 
 		label = new JLabel("Destination");
-		textField = new JTextField();
+		textField_destination = new JTextField();
 		panel.add(label);
-		panel.add(textField);
+		panel.add(textField_destination);
 
 		label = new JLabel("Travel date");
-		textField = new JTextField();
+		textField_tDate = new JTextField();
 		panel.add(label);
-		panel.add(textField);
+		panel.add(textField_tDate);
 
 		label = new JLabel("Return date");
-		textField = new JTextField();
+		textField_rDate = new JTextField();
 		panel.add(label);
-		panel.add(textField);
+		panel.add(textField_rDate);
 
 		label = new JLabel("Number of pass.");
-		textField = new JTextField();
+		textField_nrOfPass = new JTextField();
 		panel.add(label);
-		panel.add(textField);
+		panel.add(textField_nrOfPass);
 
 		label = new JLabel("Reservation accepted");
-		textField = new JTextField();
+		textField_reservAccepted = new JTextField();
 		panel.add(label);
-		panel.add(textField);
+		panel.add(textField_reservAccepted);
 		
 		container.add(panel, BorderLayout.LINE_START);
 		/* ********************** */
@@ -78,34 +93,34 @@ public class GUI {
 		panel.setLayout(new GridLayout(7, 2));
 		
 		label = new JLabel("Credit card owner");
-		textField = new JTextField();
+		textField_ccOwner = new JTextField();
 		panel.add(label);
-		panel.add(textField);
+		panel.add(textField_ccOwner);
 		
 		label = new JLabel("Credit card number");
-		textField = new JTextField();
+		textField_ccNumber = new JTextField();
 		panel.add(label);
-		panel.add(textField);
+		panel.add(textField_ccNumber);
 
 		label = new JLabel("Billing name");
-		textField = new JTextField();
+		textField_billingName = new JTextField();
 		panel.add(label);
-		panel.add(textField);
+		panel.add(textField_billingName);
 
 		label = new JLabel("Billing address");
-		textField = new JTextField();
+		textField_billingAddress = new JTextField();
 		panel.add(label);
-		panel.add(textField);
+		panel.add(textField_billingAddress);
 
 		label = new JLabel("Delivery address");
-		textField = new JTextField();
+		textField_deliveryAddress = new JTextField();
 		panel.add(label);
-		panel.add(textField);
+		panel.add(textField_deliveryAddress);
 
 		label = new JLabel("In full disc.");
-		textField = new JTextField();
+		textField_inFullDischarge = new JTextField();
 		panel.add(label);
-		panel.add(textField);
+		panel.add(textField_inFullDischarge);
 		
 		container.add(panel, BorderLayout.LINE_END);
 		/* ********************** */
@@ -131,7 +146,26 @@ public class GUI {
 	}
 	
 	public void notify(TravelInfo ti, BillingInfo bi) {
-		// TODO
+		EventQueue.invokeLater(()->{
+			if (ti != null) {
+				textField_id.setText(ti.getId() + "");
+				textField_origin.setText(ti.getOrigin());
+				textField_destination.setText(ti.getDestination());
+				textField_tDate.setText(ti.getTravelDate().toString());
+				textField_rDate.setText(ti.getReturnDate().toString());
+				textField_nrOfPass.setText(ti.getNrOfPassengers() + "");
+				textField_reservAccepted.setText(ti.isReservationAccepted() + "");
+			}
+			
+			if (bi != null) {
+				textField_ccOwner.setText(bi.getCreditCardOwner());
+				textField_ccNumber.setText(bi.getCreditCardNr());
+				textField_billingName.setName(bi.getBillingName());
+				textField_billingAddress.setText(bi.getBillingAddress());
+				textField_deliveryAddress.setText(bi.getDeliveryAddress());
+				textField_inFullDischarge.setText(bi.isInFullDischarge() + "");
+			}
+		});
 	}
 	
 	
