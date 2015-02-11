@@ -33,6 +33,7 @@ public class GUI {
 	private JTextField textField_billingAddress;
 	private JTextField textField_deliveryAddress;
 	private JTextField textField_inFullDischarge;
+	private JButton nextBtn;
 	
 	
 	public GUI(String title, Node node) {
@@ -127,7 +128,7 @@ public class GUI {
 		container.add(panel, BorderLayout.LINE_END);
 		/* ********************** */
 		
-		JButton nextBtn = new JButton("Next");
+		nextBtn = new JButton("Next");
 		container.add(nextBtn, BorderLayout.PAGE_END);
 		
 		nextBtn.addActionListener(new ActionListener() {
@@ -138,20 +139,22 @@ public class GUI {
 			}
 		});
 		
+		disable();
+		
 		//Display the window.
         frame.pack();
         frame.setVisible(true);
 	}
 	
 	public void enable() {
-		if (frame != null) {
-			frame.setEnabled(true);
+		if (nextBtn != null) {
+			nextBtn.setEnabled(true);
 		}
 	}
 	
 	public void disable() {
-		if (frame != null) {
-			frame.setEnabled(false);
+		if (nextBtn != null) {
+			nextBtn.setEnabled(false);
 		}
 	}
 	
