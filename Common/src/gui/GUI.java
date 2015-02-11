@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -127,6 +129,14 @@ public class GUI {
 		
 		JButton nextBtn = new JButton("Next");
 		container.add(nextBtn, BorderLayout.PAGE_END);
+		
+		nextBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				node.next();
+			}
+		});
 		
 		//Display the window.
         frame.pack();
