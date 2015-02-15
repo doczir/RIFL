@@ -1,19 +1,13 @@
 package nodes;
 
-import java.sql.Timestamp;
-import java.util.Random;
-
-import util.Generator;
 import model.BillingInfo;
-import model.TravelInfo;
 import nodes.TravelInfoNode.TravelInfoNodeDone;
+import util.NodeBehavior;
 import channel.Channel;
 
 public class BillingInfoNode extends AbstractNode {
 
 	private BillingInfo billingInfo;
-	
-	private Random random = new Random();
 	
 	private Object lock = new Object();
 	
@@ -39,8 +33,7 @@ public class BillingInfoNode extends AbstractNode {
 				gui.enable();
 				
 				billingInfo = new BillingInfo();
-				billingInfo.setBillingName(Generator.generateString(random, 15));
-				billingInfo.setBillingAddress(Generator.generateString(random, 15));
+				NodeBehavior.billingInfoBehavior(billingInfo);
 				
 				gui.notify(null, billingInfo);
 				
@@ -65,7 +58,7 @@ public class BillingInfoNode extends AbstractNode {
 	}
 
 	public static class BillingInfoNodeDone {
-		BillingInfo billingInfo;
+		private BillingInfo billingInfo;
 
 		public BillingInfoNodeDone(BillingInfo billingInfo) {
 			super();

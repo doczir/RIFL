@@ -5,6 +5,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import model.BillingInfo;
 import nodes.BillingInfoNode.BillingInfoNodeDone;
 import nodes.ProcessReservationNode.ProcessReservationNodeDone;
+import util.NodeBehavior;
 import channel.Channel;
 
 public class PaymentInfoNode extends AbstractNode {
@@ -45,7 +46,8 @@ public class PaymentInfoNode extends AbstractNode {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				billingInfo = msg.getBillingInfo();
+				billingInfo = msg.getBillingInfo();				
+				NodeBehavior.paymentInfoBehavior(billingInfo);
 
 				gui.notify(null, billingInfo);
 				gui.enable();
@@ -63,8 +65,22 @@ public class PaymentInfoNode extends AbstractNode {
 	@Override
 	public void next() {
 		gui.disable();
+		channel.broadcast(new PaymentInfoNodeDone(billingInfo));
 		synchronized (lock) {
 			lock.notify();
+		}
+	}
+
+	public static class PaymentInfoNodeDone {
+		private BillingInfo billingInfo;
+
+		public PaymentInfoNodeDone(BillingInfo billingInfo) {
+			super();
+			this.billingInfo = billingInfo;
+		}
+
+		public BillingInfo getBillingInfo() {
+			return billingInfo;
 		}
 	}
 

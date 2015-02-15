@@ -2,6 +2,7 @@ package nodes;
 
 import model.TravelInfo;
 import nodes.TravelInfoNode.TravelInfoNodeDone;
+import util.NodeBehavior;
 import channel.Channel;
 
 public class ProcessReservationNode extends AbstractNode {
@@ -32,7 +33,7 @@ public class ProcessReservationNode extends AbstractNode {
 					}
 					gui.enable();
 					travelInfo = msg.getTravelInfo();
-					travelInfo.setReservationAccepted(true);
+					NodeBehavior.processReservationBehavior(travelInfo);
 					gui.notify(travelInfo, null);
 					synchronized (lock) {
 						try {
@@ -56,7 +57,7 @@ public class ProcessReservationNode extends AbstractNode {
 	}
 	
 	public static class ProcessReservationNodeDone {
-		TravelInfo travelInfo;
+		private TravelInfo travelInfo;
 		
 		public ProcessReservationNodeDone(TravelInfo travelInfo) {
 			super();

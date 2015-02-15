@@ -1,11 +1,8 @@
 package nodes;
 
-import java.sql.Timestamp;
-import java.util.Random;
-
 import messages.Start;
 import model.TravelInfo;
-import util.Generator;
+import util.NodeBehavior;
 import channel.Channel;
 
 public class TravelInfoNode extends AbstractNode {
@@ -14,8 +11,6 @@ public class TravelInfoNode extends AbstractNode {
 
 	public TravelInfoNode(Channel channel) {
 		super(channel);
-
-		Random random = new Random();
 
 		channel.add(Start.class, (msg) -> {
 			try {
@@ -34,16 +29,7 @@ public class TravelInfoNode extends AbstractNode {
 				}
 				gui.enable();
 				travelInfo = new TravelInfo();
-				travelInfo.setId(random.nextInt());
-				travelInfo.setDestination(Generator.generateString(random, 10));
-				travelInfo.setOrigin(Generator.generateString(random, 10));
-				travelInfo.setNrOfPassengers(random.nextInt());
-				travelInfo.setTravelDate(Generator.generateDate(random,
-						Timestamp.valueOf("2013-01-01 00:00:00").getTime(),
-						Timestamp.valueOf("2013-12-31 00:58:00").getTime()));
-				travelInfo.setReturnDate(Generator.generateDate(random,
-						Timestamp.valueOf("2014-01-01 00:00:00").getTime(),
-						Timestamp.valueOf("2014-12-31 00:58:00").getTime()));
+				NodeBehavior.travelInfoBehavior(travelInfo);
 				gui.notify(travelInfo, null);
 			}
 		});
