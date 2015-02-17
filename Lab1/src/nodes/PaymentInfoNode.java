@@ -3,6 +3,7 @@ package nodes;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.logging.Logger;
 
 import model.BillingInfo;
 import nodes.BillingInfoNode.BillingInfoNodeDone;
@@ -58,8 +59,7 @@ public class PaymentInfoNode extends AbstractNode {
 				
 				joinIncomingMessages();
 			} catch (Exception e) {
-				// TODO hibakezeles
-				e.printStackTrace();
+				Logger.getLogger(PaymentInfoNode.this.getClass().getSimpleName()).severe("An exception occured: " + e.getMessage());
 			}
 		});
 
@@ -69,8 +69,7 @@ public class PaymentInfoNode extends AbstractNode {
 				
 				joinIncomingMessages();
 			} catch (Exception e) {
-				// TODO hibakezeles
-				e.printStackTrace();
+				Logger.getLogger(PaymentInfoNode.this.getClass().getSimpleName()).severe("An exception occured: " + e.getMessage());
 			}
 		});
 	}
@@ -101,7 +100,7 @@ public class PaymentInfoNode extends AbstractNode {
 			gui.notify(null, billingInfo);
 			gui.enable();
 		} catch (Exception e) {
-			// TODO hibakezeles
+			Logger.getLogger(PaymentInfoNode.this.getClass().getSimpleName()).severe("An exception occured: " + e.getMessage());
 		}
 	}
 }

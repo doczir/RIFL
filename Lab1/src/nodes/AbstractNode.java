@@ -4,6 +4,7 @@ import gui.GUI;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.logging.Logger;
 
 import node.Node;
 import channel.Channel;
@@ -29,9 +30,8 @@ public abstract class AbstractNode implements Node {
 				synchronized (lock) {
 					try {
 						lock.wait();
-					} catch (Exception e1) {
-						// TODO hibakezeles!
-						e1.printStackTrace();
+					} catch (Exception e) {
+						Logger.getLogger(AbstractNode.this.getClass().getSimpleName()).severe("An exception occured: " + e.getMessage());
 					}
 				}				
 			}			
@@ -51,8 +51,7 @@ public abstract class AbstractNode implements Node {
 				gui.setQueueSize(queue.size());
 			}
 		} catch (Exception e) {
-			// TODO hibakezeles LOG4J!
-			e.printStackTrace();
+			Logger.getLogger(this.getClass().getSimpleName()).severe("An exception occured: " + e.getMessage());
 		}
 	}
 	
@@ -66,8 +65,7 @@ public abstract class AbstractNode implements Node {
 				gui.setQueueSize(queue.size());
 			}
 		} catch (Exception e) {
-			// TODO hibakezeles LOG4J
-			e.printStackTrace();
+			Logger.getLogger(this.getClass().getSimpleName()).severe("An exception occured: " + e.getMessage());
 		}
 		
 		return result;

@@ -1,6 +1,5 @@
 package nodes;
 
-import messages.Start;
 import model.TravelInfo;
 import util.NodeBehavior;
 import channel.Channel;
@@ -37,6 +36,8 @@ public class TravelInfoNode extends AbstractNode {
 			lock.notify();
 		}
 	}
+	
+	public static class Start {}
 
 	public static class TravelInfoNodeDone {
 		private TravelInfo travelInfo;

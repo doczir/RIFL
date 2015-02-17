@@ -2,7 +2,6 @@ package util;
 
 import gui.GUI;
 import gui.SMORGUI;
-import messages.Start;
 import nodes.BillingInfoNode;
 import nodes.DeliveryAddressNode;
 import nodes.PaymentInfoNode;
@@ -10,6 +9,7 @@ import nodes.ProcessPaymentNode;
 import nodes.ProcessReservationNode;
 import nodes.SelectModeOfReciptNode;
 import nodes.TravelInfoNode;
+import nodes.TravelInfoNode.Start;
 import channel.Channel;
 
 public class Main {
