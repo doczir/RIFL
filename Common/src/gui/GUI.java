@@ -7,6 +7,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -19,7 +20,9 @@ import node.Node;
 
 public class GUI {
 
-	private JFrame frame = null;
+	protected JFrame frame = null;
+	protected JPanel buttons;
+	private JLabel queueSizeLabel = null;
 	private JTextField textField_id;
 	private JTextField textField_origin;
 	private JTextField textField_destination;
@@ -37,53 +40,68 @@ public class GUI {
 	
 	
 	public GUI(String title, Node node) {
-		node.setGui(this);
-		
 		frame = new JFrame(title);
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
+		createGUI(node);
+
+		setQueueSize(0);
+		
+		node.setGui(this);
+		
+		disable();
+		
+		//Display the window.
+        frame.pack();
+        frame.setVisible(true);
+	}
+	
+	protected void createGUI(Node node) {
 		Container container = frame.getContentPane();
 		
 		JPanel panel = null;
 		JLabel label = null;
+		
+		queueSizeLabel = new JLabel();
+		container.add(queueSizeLabel, BorderLayout.PAGE_START);
 		
 		/* Create TravelInfo view */
 		panel = new JPanel();
 		panel.setLayout(new GridLayout(7, 2));
 		
 		label = new JLabel("ID");
-		textField_id = new JTextField();
+		textField_id = new JTextField(15);
 		panel.add(label);
 		panel.add(textField_id);
 		
 		label = new JLabel("Origin");
-		textField_origin = new JTextField();
+		textField_origin = new JTextField(15);
 		panel.add(label);
 		panel.add(textField_origin);
 
 		label = new JLabel("Destination");
-		textField_destination = new JTextField();
+		textField_destination = new JTextField(15);
 		panel.add(label);
 		panel.add(textField_destination);
 
 		label = new JLabel("Travel date");
-		textField_tDate = new JTextField();
+		textField_tDate = new JTextField(15);
 		panel.add(label);
 		panel.add(textField_tDate);
 
 		label = new JLabel("Return date");
-		textField_rDate = new JTextField();
+		textField_rDate = new JTextField(15);
 		panel.add(label);
 		panel.add(textField_rDate);
 
 		label = new JLabel("Number of pass.");
-		textField_nrOfPass = new JTextField();
+		textField_nrOfPass = new JTextField(15);
 		panel.add(label);
 		panel.add(textField_nrOfPass);
 
 		label = new JLabel("Reservation accepted");
-		textField_reservAccepted = new JTextField();
+		textField_reservAccepted = new JTextField(15);
 		panel.add(label);
 		panel.add(textField_reservAccepted);
 		
@@ -96,40 +114,44 @@ public class GUI {
 		panel.setLayout(new GridLayout(7, 2));
 		
 		label = new JLabel("Credit card owner");
-		textField_ccOwner = new JTextField();
+		textField_ccOwner = new JTextField(15);
 		panel.add(label);
 		panel.add(textField_ccOwner);
 		
 		label = new JLabel("Credit card number");
-		textField_ccNumber = new JTextField();
+		textField_ccNumber = new JTextField(15);
 		panel.add(label);
 		panel.add(textField_ccNumber);
 
 		label = new JLabel("Billing name");
-		textField_billingName = new JTextField();
+		textField_billingName = new JTextField(15);
 		panel.add(label);
 		panel.add(textField_billingName);
 
 		label = new JLabel("Billing address");
-		textField_billingAddress = new JTextField();
+		textField_billingAddress = new JTextField(15);
 		panel.add(label);
 		panel.add(textField_billingAddress);
 
 		label = new JLabel("Delivery address");
-		textField_deliveryAddress = new JTextField();
+		textField_deliveryAddress = new JTextField(15);
 		panel.add(label);
 		panel.add(textField_deliveryAddress);
 
 		label = new JLabel("In full disc.");
-		textField_inFullDischarge = new JTextField();
+		textField_inFullDischarge = new JTextField(15);
 		panel.add(label);
 		panel.add(textField_inFullDischarge);
 		
 		container.add(panel, BorderLayout.LINE_END);
 		/* ********************** */
 		
+		buttons = new JPanel();
+		buttons.setLayout(new BoxLayout(buttons, BoxLayout.LINE_AXIS));
+		container.add(buttons, BorderLayout.PAGE_END);
+		
 		nextBtn = new JButton("Next");
-		container.add(nextBtn, BorderLayout.PAGE_END);
+		buttons.add(nextBtn);
 		
 		nextBtn.addActionListener(new ActionListener() {
 			
@@ -138,12 +160,6 @@ public class GUI {
 				node.next();
 			}
 		});
-		
-		disable();
-		
-		//Display the window.
-        frame.pack();
-        frame.setVisible(true);
 	}
 	
 	public void enable() {
@@ -156,6 +172,14 @@ public class GUI {
 		if (nextBtn != null) {
 			nextBtn.setEnabled(false);
 		}
+	}
+	
+	public void setQueueSize(int size) {
+		EventQueue.invokeLater(() -> {
+			if (queueSizeLabel != null) {
+				queueSizeLabel.setText("Number of waiting tasks: " + size);
+			}
+		});
 	}
 	
 	public void notify(TravelInfo ti, BillingInfo bi) {
@@ -173,13 +197,11 @@ public class GUI {
 			if (bi != null) {
 				textField_ccOwner.setText(bi.getCreditCardOwner());
 				textField_ccNumber.setText(bi.getCreditCardNr());
-				textField_billingName.setName(bi.getBillingName());
+				textField_billingName.setText(bi.getBillingName());
 				textField_billingAddress.setText(bi.getBillingAddress());
 				textField_deliveryAddress.setText(bi.getDeliveryAddress());
 				textField_inFullDischarge.setText(bi.isInFullDischarge() + "");
 			}
 		});
 	}
-	
-	
 }

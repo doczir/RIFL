@@ -1,6 +1,7 @@
 package util;
 
 import gui.GUI;
+import gui.SMORGUI;
 import messages.Start;
 import nodes.BillingInfoNode;
 import nodes.DeliveryAddressNode;
@@ -18,16 +19,14 @@ public class Main {
 		Channel channel = new Channel();
 		
 		
-		TravelInfoNode travelInfoNode = new TravelInfoNode(channel);
-		new GUI("TravelInfo", travelInfoNode);
+		new GUI("TravelInfoNode", new TravelInfoNode(channel));
 		new GUI("ProcessReservationNode", new ProcessReservationNode(channel));
 		new GUI("BillingInfoNode", new BillingInfoNode(channel));
 		new GUI("PaymentInfoNode", new PaymentInfoNode(channel));
 		new GUI("ProcessPaymentNode", new ProcessPaymentNode(channel));
-		new GUI("SelectModeOfReciptNode", new SelectModeOfReciptNode(channel));
+		new SMORGUI("SelectModeOfReciptNode", new SelectModeOfReciptNode(channel));
 		new GUI("DeliveryAddress", new DeliveryAddressNode(channel));
 		
 		channel.broadcast(new Start());
 	}
-	
 }

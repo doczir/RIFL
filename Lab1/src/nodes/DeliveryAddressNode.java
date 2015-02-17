@@ -1,54 +1,39 @@
 package nodes;
 
 import model.BillingInfo;
-import nodes.PaymentInfoNode.PaymentInfoNodeDone;
 import nodes.SelectModeOfReciptNode.SelectModeOfReciptDone;
 import util.NodeBehavior;
 import channel.Channel;
 
 public class DeliveryAddressNode extends AbstractNode {
 
-	private Object lock = new Object();
 	private BillingInfo billingInfo;
 
 	public DeliveryAddressNode(Channel channel) {
 		super(channel);
+	}
 
+	@Override
+	protected void init() {
 		channel.add(SelectModeOfReciptDone.class, msg -> {
-			try {
-				if (msg.isDelivery())
-					queue.put(msg);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
-
-		start(() -> {
-			while (true) {
-				SelectModeOfReciptDone msg = null;
-				try {
-					msg = (SelectModeOfReciptDone) queue.take();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				gui.enable();
-
-				billingInfo = msg.getBillingInfo();
-
-				NodeBehavior.deliveryAddressBehavior(billingInfo);
-
-				gui.notify(null, billingInfo);
-				gui.enable();
-				synchronized (lock) {
-					try {
-						lock.wait();
-					} catch (Exception e1) {
-						e1.printStackTrace();
-					}
-				}
+			if (((SelectModeOfReciptDone) msg).isDelivery()) {
+				onMessageReceived(msg);
 			}
 		});
 	}
+
+	@Override
+	protected void processMessage(Object message) {
+		SelectModeOfReciptDone msg = (SelectModeOfReciptDone) message;
+		
+		gui.enable();
+
+		billingInfo = msg.getBillingInfo();
+
+		NodeBehavior.deliveryAddressBehavior(billingInfo);
+
+		gui.notify(null, billingInfo);
+	}	
 
 	@Override
 	public void next() {
@@ -72,5 +57,4 @@ public class DeliveryAddressNode extends AbstractNode {
 			return billingInfo;
 		}
 	}
-
 }

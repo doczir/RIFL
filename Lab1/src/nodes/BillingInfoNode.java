@@ -9,43 +9,26 @@ public class BillingInfoNode extends AbstractNode {
 
 	private BillingInfo billingInfo;
 	
-	private Object lock = new Object();
-	
 
 	public BillingInfoNode(Channel channel) {
 		super(channel);
+	}
 
+	@Override
+	protected void init() {
 		channel.add(TravelInfoNodeDone.class, msg -> {
-			try {
-				queue.put(msg);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			onMessageReceived(msg);
 		});
+	}
+
+	@Override
+	protected void processMessage(Object message) {
+		gui.enable();
 		
-		start(()->{
-			while (true) {
-				try {
-					queue.take();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				gui.enable();
-				
-				billingInfo = new BillingInfo();
-				NodeBehavior.billingInfoBehavior(billingInfo);
-				
-				gui.notify(null, billingInfo);
-				
-				synchronized (lock) {
-					try {
-						lock.wait();
-					} catch (Exception e1) {
-						e1.printStackTrace();
-					}
-				}				
-			}
-		});
+		billingInfo = new BillingInfo();
+		NodeBehavior.billingInfoBehavior(billingInfo);
+		
+		gui.notify(null, billingInfo);
 	}
 
 	@Override

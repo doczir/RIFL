@@ -11,34 +11,31 @@ public class TravelInfoNode extends AbstractNode {
 
 	public TravelInfoNode(Channel channel) {
 		super(channel);
+	}
+	
 
+	@Override
+	protected void init() {
 		channel.add(Start.class, (msg) -> {
-			try {
-				queue.put(msg);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
-
-		start(() -> {
-			while (true) {
-				try {
-					queue.take();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				gui.enable();
-				travelInfo = new TravelInfo();
-				NodeBehavior.travelInfoBehavior(travelInfo);
-				gui.notify(travelInfo, null);
-			}
+			onMessageReceived(msg);
 		});
 	}
+
+	@Override
+	protected void processMessage(Object message) {
+		gui.enable();
+		travelInfo = new TravelInfo();
+		NodeBehavior.travelInfoBehavior(travelInfo);
+		gui.notify(travelInfo, null);
+	}	
 
 	@Override
 	public void next() {
 		channel.broadcast(new TravelInfoNodeDone(travelInfo));
 		channel.broadcast(new Start());
+		synchronized (lock) {
+			lock.notify();
+		}
 	}
 
 	public static class TravelInfoNodeDone {
@@ -53,4 +50,5 @@ public class TravelInfoNode extends AbstractNode {
 			return travelInfo;
 		}
 	}
+
 }

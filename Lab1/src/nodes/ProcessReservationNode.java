@@ -8,45 +8,29 @@ import channel.Channel;
 public class ProcessReservationNode extends AbstractNode {
 
 	private TravelInfo travelInfo;
-	private Object lock = new Object();
 
+	
 	public ProcessReservationNode(Channel channel) {
 		super(channel);
+	}
 
+	@Override
+	protected void init() {
 		channel.add(TravelInfoNodeDone.class, (msg) -> {
-			try {
-				queue.put(msg);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
-
-		start(() -> {
-			{
-				while (true) {
-					TravelInfoNodeDone msg = null;
-					try {
-						msg = (TravelInfoNodeDone) queue.take();
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					gui.enable();
-					travelInfo = msg.getTravelInfo();
-					NodeBehavior.processReservationBehavior(travelInfo);
-					gui.notify(travelInfo, null);
-					synchronized (lock) {
-						try {
-							lock.wait();
-						} catch (Exception e1) {
-							e1.printStackTrace();
-						}
-					}
-				}
-			}
+			onMessageReceived(msg);
 		});
 	}
 
+	@Override
+	protected void processMessage(Object message) {
+		TravelInfoNodeDone msg = (TravelInfoNodeDone) message;
+
+		gui.enable();
+		travelInfo = msg.getTravelInfo();
+		NodeBehavior.processReservationBehavior(travelInfo);
+		gui.notify(travelInfo, null);
+	}
+	
 	@Override
 	public void next() {
 		gui.disable();
@@ -64,11 +48,8 @@ public class ProcessReservationNode extends AbstractNode {
 			this.travelInfo = travelInfo;
 		}
 
-
-
 		public TravelInfo getTravelInfo() {
 			return travelInfo;
 		}
 	}
-
 }

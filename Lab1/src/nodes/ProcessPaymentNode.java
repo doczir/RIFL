@@ -1,49 +1,35 @@
 package nodes;
 
-import util.NodeBehavior;
 import model.BillingInfo;
 import nodes.PaymentInfoNode.PaymentInfoNodeDone;
-import nodes.ProcessReservationNode.ProcessReservationNodeDone;
+import util.NodeBehavior;
 import channel.Channel;
 
 public class ProcessPaymentNode extends AbstractNode {
 	
-	private Object lock = new Object();
 	private BillingInfo billingInfo;
 
+	
 	public ProcessPaymentNode(Channel channel) {
 		super(channel);
-
-		channel.add(PaymentInfoNodeDone.class, msg -> {
-			try {
-				queue.put(msg);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
-		
-		start(() -> {
-			while(true) {
-				PaymentInfoNodeDone msg = null;
-				try {
-					msg = (PaymentInfoNodeDone) queue.take();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				gui.enable();
-				billingInfo = msg.getBillingInfo();
-				NodeBehavior.processPaymentBehavior(billingInfo);
-				gui.notify(null, billingInfo);
-				synchronized (lock ) {
-					try {
-						lock.wait();
-					} catch (Exception e1) {
-						e1.printStackTrace();
-					}
-				}
-			}
-		}); 
 	}
+	
+	@Override
+	protected void init() {
+		channel.add(PaymentInfoNodeDone.class, msg -> {
+			onMessageReceived(msg);
+		});
+	}
+
+	@Override
+	protected void processMessage(Object message) {
+		PaymentInfoNodeDone msg = (PaymentInfoNodeDone) message;
+		
+		gui.enable();
+		billingInfo = msg.getBillingInfo();
+		NodeBehavior.processPaymentBehavior(billingInfo);
+		gui.notify(null, billingInfo);
+	}	
 
 	@Override
 	public void next() {
@@ -66,6 +52,4 @@ public class ProcessPaymentNode extends AbstractNode {
 			return billingInfo;
 		}
 	}
-	
-	
 }
