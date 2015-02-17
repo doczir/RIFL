@@ -16,7 +16,7 @@ public class DeliveryAddressNode extends AbstractNode {
 	@Override
 	protected void init() {
 		channel.add(SelectModeOfReciptDone.class, msg -> {
-			if (((SelectModeOfReciptDone) msg).isDelivery()) {
+			if (msg.isDelivery()) {
 				onMessageReceived(msg);
 			}
 		});
