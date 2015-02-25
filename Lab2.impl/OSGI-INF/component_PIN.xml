@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="Lab2.impl.PIN">
+   <implementation class="lab2.impl.PaymentInfoNodeImpl"/>
+   <reference bind="setSMORN" cardinality="1..1" interface="lab2.inf.SelectModeOfReciptNode" name="SelectModeOfReciptNode" policy="static" unbind="unsetSMORN"/>
+   <reference bind="setPPN" cardinality="1..1" interface="lab2.inf.ProcessPaymentNode" name="ProcessPaymentNode" policy="static" unbind="unsetPPN"/>
+   <service>
+      <provide interface="lab2.inf.ProcessPaymentNode"/>
+   </service>
+</scr:component>
