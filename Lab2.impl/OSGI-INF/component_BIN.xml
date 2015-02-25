@@ -4,4 +4,5 @@
    <service>
       <provide interface="lab2.inf.BillingInfoNode"/>
    </service>
+   <reference bind="setPin" cardinality="1..1" interface="lab2.inf.PaymentInfoNode" name="PaymentInfoNode" policy="dynamic" unbind="unsetPin"/>
 </scr:component>

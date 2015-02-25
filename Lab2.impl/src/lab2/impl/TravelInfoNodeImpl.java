@@ -1,7 +1,7 @@
 package lab2.impl;
 
 import lab2.inf.BillingInfoNode;
-import lab2.inf.PrecessReservationNode;
+import lab2.inf.ProcessReservationNode;
 import lab2.inf.TravelInfoNode;
 import commonosgi.gui.GUI;
 import commonosgi.model.TravelInfo;
@@ -10,7 +10,7 @@ import commonosgi.util.NodeBehavior;
 public class TravelInfoNodeImpl extends AbstractNode implements TravelInfoNode {
 
 	private BillingInfoNode bin;
-	private PrecessReservationNode prn;
+	private ProcessReservationNode prn;
 	private TravelInfo travelInfo;
 
 
@@ -59,7 +59,7 @@ public class TravelInfoNodeImpl extends AbstractNode implements TravelInfoNode {
 		this.bin = bin;
 	}
 
-	public void setPrn(PrecessReservationNode prn) {
+	public void setPrn(ProcessReservationNode prn) {
 		System.out.println("TIN setPRN");
 		
 		
@@ -75,7 +75,7 @@ public class TravelInfoNodeImpl extends AbstractNode implements TravelInfoNode {
 		}
 	}
 
-	public void unsetPrn(PrecessReservationNode prn) {
+	public void unsetPrn(ProcessReservationNode prn) {
 		System.out.println("TIN unsetPRN");
 		
 		
