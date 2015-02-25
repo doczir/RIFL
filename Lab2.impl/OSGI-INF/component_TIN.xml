@@ -5,4 +5,5 @@
       <provide interface="lab2.inf.TravelInfoNode"/>
    </service>
    <reference bind="setBin" cardinality="1..1" interface="lab2.inf.BillingInfoNode" name="BillingInfoNode" policy="dynamic" unbind="unsetBin"/>
+   <reference bind="setPrn" cardinality="1..1" interface="lab2.inf.ProcessReservationNode" name="ProcessReservationNode" policy="dynamic" unbind="unsetPrn"/>
 </scr:component>

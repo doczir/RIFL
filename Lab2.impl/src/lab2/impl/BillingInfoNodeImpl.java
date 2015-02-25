@@ -25,7 +25,7 @@ public class BillingInfoNodeImpl extends AbstractNode implements BillingInfoNode
 	public void createBillingInfo() {
 		System.out.println("BIN createBillingInfo");
 		
-		if (queue.isEmpty()) {
+		if (queue.isEmpty() && billingInfo == null) {
 			billingInfo = new BillingInfo();
 			
 			NodeBehavior.billingInfoBehavior(billingInfo);
@@ -41,7 +41,7 @@ public class BillingInfoNodeImpl extends AbstractNode implements BillingInfoNode
 	@Override
 	public void next() {
 		if (billingInfo != null && pin != null) {
-			//pin.getPaymentInfo(billingInfo);
+			pin.getPaymentInfo(billingInfo);
 			
 			billingInfo = null;
 			

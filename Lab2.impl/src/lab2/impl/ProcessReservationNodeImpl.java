@@ -24,7 +24,7 @@ public class ProcessReservationNodeImpl extends AbstractNode implements
 	@Override
 	public void next() {
 		if (this.travelInfo != null && pin != null) {
-			//pin
+			pin.processReservationFinished();
 			
 			travelInfo = null;
 			
@@ -44,7 +44,7 @@ public class ProcessReservationNodeImpl extends AbstractNode implements
 
 	@Override
 	public void processReservation(TravelInfo travelInfo) {
-		if (queue.isEmpty()) {
+		if (queue.isEmpty() && this.travelInfo == null) {
 			this.travelInfo = travelInfo;
 			
 			NodeBehavior.processReservationBehavior(this.travelInfo);
