@@ -33,6 +33,8 @@ public class BillingInfoNodeImpl extends AbstractNode implements
 		} else {
 			queue.add(new Object());
 		}
+		
+		gui.setQueueSize(queue.size());
 	}
 
 	@Override
@@ -56,6 +58,9 @@ public class BillingInfoNodeImpl extends AbstractNode implements
 
 			gui.enable();
 		}
+		
+		
+		gui.setQueueSize(queue.size());		
 	}
 
 	public void setPin(PaymentInfoNode pin) {

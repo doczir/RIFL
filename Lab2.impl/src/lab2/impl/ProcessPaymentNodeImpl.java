@@ -21,10 +21,19 @@ public class ProcessPaymentNodeImpl extends AbstractNode implements
 	public void next() {
 		billingInfo = null;
 
-		if (!queue.isEmpty())
+		if (!queue.isEmpty()) {
 			billingInfo = (BillingInfo) queue.poll();
-		else
+		
+			NodeBehavior.processPaymentBehavior(billingInfo);
+	
+			gui.notify(null, billingInfo);
+	
+			gui.enable();
+		} else {
 			gui.disable();
+		}
+		
+		gui.setQueueSize(queue.size());		
 	}
 
 	@Override
@@ -40,6 +49,8 @@ public class ProcessPaymentNodeImpl extends AbstractNode implements
 		} else {
 			queue.add(billingInfo);
 		}
+		
+		gui.setQueueSize(queue.size());		
 	}
 
 }

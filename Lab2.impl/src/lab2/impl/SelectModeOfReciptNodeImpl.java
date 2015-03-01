@@ -76,10 +76,16 @@ public class SelectModeOfReciptNodeImpl extends AbstractNode implements
 			dan.getDeliveryAddress(billingInfo);
 		billingInfo = null;
 
-		if (!queue.isEmpty())
+		if (!queue.isEmpty()) {
 			billingInfo = (BillingInfo) queue.poll();
-		else
+
+			gui.notify(null, billingInfo);
+			gui.enable();			
+		} else {
 			gui.disable();
+		}
+		
+		gui.setQueueSize(queue.size());		
 	}
 
 	@Override
@@ -92,6 +98,8 @@ public class SelectModeOfReciptNodeImpl extends AbstractNode implements
 		} else {
 			queue.add(billingInfo);
 		}
+		
+		gui.setQueueSize(queue.size());
 	}
 
 	public void setDAN(DeliveryAddressNode dan) {

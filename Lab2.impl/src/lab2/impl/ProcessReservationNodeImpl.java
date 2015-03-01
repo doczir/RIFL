@@ -22,7 +22,7 @@ public class ProcessReservationNodeImpl extends AbstractNode implements
 	@Override
 	public void next() {
 		if (this.travelInfo != null && pin != null) {
-			pin.processReservationFinished();
+			pin.processReservationFinished(travelInfo);
 
 			travelInfo = null;
 
@@ -38,6 +38,8 @@ public class ProcessReservationNodeImpl extends AbstractNode implements
 
 			gui.enable();
 		}
+		
+		gui.setQueueSize(queue.size());		
 	}
 
 	@Override
@@ -53,6 +55,8 @@ public class ProcessReservationNodeImpl extends AbstractNode implements
 		} else {
 			queue.add(travelInfo);
 		}
+		
+		gui.setQueueSize(queue.size());
 	}
 
 	public void setPin(PaymentInfoNode pin) {

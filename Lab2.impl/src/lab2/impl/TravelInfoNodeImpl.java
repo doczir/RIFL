@@ -42,6 +42,8 @@ public class TravelInfoNodeImpl extends AbstractNode implements TravelInfoNode {
 		travelInfo = new TravelInfo();
 		NodeBehavior.travelInfoBehavior(travelInfo);
 
+		gui.setQueueSize(queue.size());
+		
 		gui.notify(travelInfo, null);
 	}
 
