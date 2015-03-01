@@ -4,6 +4,6 @@
    <service>
       <provide interface="lab2.inf.PaymentInfoNode"/>
    </service>
+   <reference bind="setPPN" cardinality="1..1" interface="lab2.inf.ProcessPaymentNode" name="ProcessPaymentNode" policy="dynamic" unbind="unsetPPN"/>
    <reference bind="setSMORN" cardinality="1..1" interface="lab2.inf.SelectModeOfReciptNode" name="SelectModeOfReciptNode" policy="static" unbind="unsetSMORN"/>
-   <reference bind="setPPN" cardinality="1..1" interface="lab2.inf.ProcessPaymentNode" name="ProcessPaymentNode" policy="static" unbind="unsetPPN"/>>
 </scr:component>

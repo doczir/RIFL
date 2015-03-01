@@ -10,11 +10,10 @@ public abstract class AbstractNode implements Node {
 
 	protected Queue queue;
 	protected GUI gui;
-	
 
 	public AbstractNode() {
 		super();
-		
+
 		this.queue = new LinkedList();
 	}
 

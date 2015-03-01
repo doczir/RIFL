@@ -5,5 +5,5 @@ import commonosgi.model.BillingInfo;
 public interface ProcessPaymentNode {
 
 	public void processPayment(BillingInfo billingInfo);
-	
+
 }

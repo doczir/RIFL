@@ -6,6 +6,7 @@ import java.util.Queue;
 import lab2.inf.PaymentInfoNode;
 import lab2.inf.ProcessPaymentNode;
 import lab2.inf.SelectModeOfReciptNode;
+
 import commonosgi.gui.GUI;
 import commonosgi.model.BillingInfo;
 import commonosgi.util.NodeBehavior;
@@ -23,7 +24,7 @@ public class PaymentInfoNodeImpl extends AbstractNode implements
 		super();
 
 		biq = new LinkedList<BillingInfo>();
-		
+
 		new GUI("PaymentInfoNode", this);
 	}
 
@@ -32,7 +33,7 @@ public class PaymentInfoNodeImpl extends AbstractNode implements
 		smorn.selectModeOfRecipt(billingInfo);
 		ppn.processPayment(billingInfo);
 		billingInfo = null;
-		
+
 		if (!biq.isEmpty() && prq > 0)
 			createBI();
 		else

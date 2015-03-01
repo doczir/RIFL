@@ -1,6 +1,7 @@
 package lab2.impl;
 
 import lab2.inf.ProcessPaymentNode;
+
 import commonosgi.gui.GUI;
 import commonosgi.model.BillingInfo;
 import commonosgi.util.NodeBehavior;
@@ -12,10 +13,10 @@ public class ProcessPaymentNodeImpl extends AbstractNode implements
 
 	public ProcessPaymentNodeImpl() {
 		super();
-		
+
 		new GUI("Process payment node", this);
 	}
-	
+
 	@Override
 	public void next() {
 		billingInfo = null;

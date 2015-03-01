@@ -5,5 +5,5 @@ import commonosgi.model.BillingInfo;
 public interface SelectModeOfReciptNode {
 
 	public void selectModeOfRecipt(BillingInfo billingInfo);
-	
+
 }
