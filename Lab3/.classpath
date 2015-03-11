@@ -3,5 +3,14 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Common"/>
+	<classpathentry kind="lib" path="lib/commons-cli-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-io-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/junit.jar"/>
+	<classpathentry kind="lib" path="lib/rabbitmq-client-tests.jar"/>
+	<classpathentry kind="lib" path="lib/rabbitmq-client.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/Lab3/lib/rabbitmq-java-client-javadoc-3.4.3.zip!/rabbitmq-java-client-javadoc-3.4.3"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
