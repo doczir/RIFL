@@ -1,5 +1,7 @@
 package nodes;
 
+import java.io.IOException;
+
 import model.BillingInfo;
 import nodes.SelectModeOfReciptNode.SelectModeOfReciptDone;
 import util.NodeBehavior;
@@ -8,7 +10,7 @@ public class DeliveryAddressNode extends AbstractNode {
 
 	private BillingInfo billingInfo;
 
-	public DeliveryAddressNode() {
+	public DeliveryAddressNode() throws IOException {
 		super();
 	}
 

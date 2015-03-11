@@ -1,5 +1,7 @@
 package nodes;
 
+import java.io.IOException;
+
 import model.TravelInfo;
 import nodes.TravelInfoNode.TravelInfoNodeDone;
 import util.NodeBehavior;
@@ -9,7 +11,7 @@ public class ProcessReservationNode extends AbstractNode {
 	private TravelInfo travelInfo;
 
 	
-	public ProcessReservationNode() {
+	public ProcessReservationNode() throws IOException {
 		super();
 	}
 

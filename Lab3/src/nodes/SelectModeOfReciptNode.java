@@ -5,6 +5,7 @@ import gui.SMORGUI;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 import javax.swing.JButton;
 
@@ -17,7 +18,7 @@ public class SelectModeOfReciptNode extends AbstractNode {
 	private BillingInfo billingInfo;
 
 	
-	public SelectModeOfReciptNode() {
+	public SelectModeOfReciptNode() throws IOException {
 		super();
 	}
 

@@ -1,5 +1,6 @@
 package nodes;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -21,7 +22,7 @@ public class PaymentInfoNode extends AbstractNode {
 	private ArrayBlockingQueue<BillingInfoNodeDone> bind;
 	
 	
-	public PaymentInfoNode() {
+	public PaymentInfoNode() throws IOException {
 		super();
 	}
 

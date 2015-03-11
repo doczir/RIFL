@@ -1,5 +1,7 @@
 package util;
 
+import java.io.IOException;
+
 import gui.GUI;
 import gui.SMORGUI;
 import nodes.BillingInfoNode;
@@ -13,7 +15,7 @@ import nodes.TravelInfoNode;
 public class Main {
 
 
-	public static void main(String[] args) throws InterruptedException {		
+	public static void main(String[] args) throws InterruptedException, IOException {		
 		new GUI("TravelInfoNode", new TravelInfoNode());
 		new GUI("ProcessReservationNode", new ProcessReservationNode());
 		new GUI("BillingInfoNode", new BillingInfoNode());

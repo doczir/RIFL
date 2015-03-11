@@ -1,41 +1,47 @@
 package nodes;
 
+import java.io.IOException;
+
 import model.BillingInfo;
-import nodes.TravelInfoNode.TravelInfoNodeDone;
 import util.NodeBehavior;
 
 public class BillingInfoNode extends AbstractNode {
 
-	private BillingInfo billingInfo;
+	//in
+	private static final String TID = "travel_info_done";
 	
+	//out
+	private static final String BID = "billing_info_done";
 
-	public BillingInfoNode() {
-		super();
+	private BillingInfo billingInfo;
+
+	public BillingInfoNode() throws IOException {
+		super(TID, BID);
 	}
 
 	@Override
 	protected void init() {
-		//channel.add(TravelInfoNodeDone.class, msg -> {
-		//	onMessageReceived(msg);
-		//});
+		// channel.add(TravelInfoNodeDone.class, msg -> {
+		// onMessageReceived(msg);
+		// });
 	}
 
 	@Override
 	protected void processMessage(Object message) {
 		gui.enable();
-		
+
 		billingInfo = new BillingInfo();
 		NodeBehavior.billingInfoBehavior(billingInfo);
-		
+
 		gui.notify(null, billingInfo);
 	}
 
 	@Override
 	public void next() {
 		gui.disable();
-//		channel.broadcast(new BillingInfoNodeDone(billingInfo));
+		// channel.broadcast(new BillingInfoNodeDone(billingInfo));
 		synchronized (lock) {
-			lock.notify();		
+			lock.notify();
 		}
 	}
 
@@ -46,7 +52,7 @@ public class BillingInfoNode extends AbstractNode {
 			super();
 			this.billingInfo = billingInfo;
 		}
-		
+
 		public BillingInfo getBillingInfo() {
 			return billingInfo;
 		}

@@ -1,5 +1,6 @@
 package nodes;
 
+import java.io.IOException;
 import java.nio.channels.Channel;
 
 import model.BillingInfo;
@@ -11,7 +12,7 @@ public class ProcessPaymentNode extends AbstractNode {
 	private BillingInfo billingInfo;
 
 	
-	public ProcessPaymentNode() {
+	public ProcessPaymentNode() throws IOException {
 		super();
 	}
 	
