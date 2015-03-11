@@ -2,16 +2,15 @@ package nodes;
 
 import java.io.IOException;
 
+import com.rabbitmq.client.QueueingConsumer;
+
 import model.TravelInfo;
 import util.NodeBehavior;
+import util.Serializer;
 
 public class TravelInfoNode extends AbstractNode {
 
-	//in
-	private static final String START = "start";
-	
-	//out
-	private static final String TID = "travel_info_done";
+	public static String EXCHANGE_NAME = "EXCHANGE_TIN";
 	
 	private TravelInfo travelInfo;
 
@@ -21,7 +20,22 @@ public class TravelInfoNode extends AbstractNode {
 	
 
 	@Override
-	protected void init() {
+	protected void init() throws IOException {
+		channel.exchangeDeclare("EXCHANGE_START", "fanout");
+
+		String queueName = channel.queueDeclare().getQueue();
+		
+		channel.queueBind(queueName, "EXCHANGE_START", "");
+
+		QueueingConsumer consumer = new QueueingConsumer(channel);
+        channel.basicConsume(queueName, true, consumer);
+
+        consumers.add(consumer);
+        
+        
+        channel.exchangeDeclare(EXCHANGE_NAME, "fanout");		
+		
+		
 //		channel.add(Start.class, (msg) -> {
 //			onMessageReceived(msg);
 //		});
@@ -36,9 +50,13 @@ public class TravelInfoNode extends AbstractNode {
 	}	
 
 	@Override
-	public void next() {
+	public void next() throws IOException {
 //		channel.broadcast(new TravelInfoNodeDone(travelInfo));
 //		channel.broadcast(new Start());
+		
+		channel.basicPublish(EXCHANGE_NAME, "", null, Serializer.serialize(travelInfo));
+		channel.basicPublish("EXCHANGE_START", "", null, Serializer.serialize("Start"));
+		
 		synchronized (lock) {
 			lock.notify();
 		}

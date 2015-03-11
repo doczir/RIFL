@@ -7,13 +7,17 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.logging.Logger;
 
 import model.BillingInfo;
+import model.TravelInfo;
 import nodes.BillingInfoNode.BillingInfoNodeDone;
 import nodes.ProcessReservationNode.ProcessReservationNodeDone;
 import util.NodeBehavior;
+import util.Serializer;
+
+import com.rabbitmq.client.QueueingConsumer;
 
 public class PaymentInfoNode extends AbstractNode {
-	private static final int KEY_PROCESS_RESERVATION_NODE_DONE = 0;
-	private static final int KEY_BILLING_INFO_NODE_DONE = 1;
+	private static final int KEY_TRAVEL_INFO = 0;
+	private static final int KEY_BILLING_INFO = 1;
 	
 	private BillingInfo billingInfo;
 
@@ -22,14 +26,20 @@ public class PaymentInfoNode extends AbstractNode {
 	private ArrayBlockingQueue<BillingInfoNodeDone> bind;
 	
 	
+	public static String EXCHANGE_NAME = "EXCHANGE_PIN";
+	
+	
 	public PaymentInfoNode() throws IOException {
 		super();
 	}
 
 	@Override
-	public void next() {
+	public void next() throws IOException {
 		gui.disable();
 //		channel.broadcast(new PaymentInfoNodeDone(billingInfo));
+		
+		channel.basicPublish(EXCHANGE_NAME, "", null, Serializer.serialize(billingInfo));
+		
 		synchronized (lock) {
 			lock.notify();
 		}
@@ -49,52 +59,48 @@ public class PaymentInfoNode extends AbstractNode {
 	}
 
 	@Override
-	protected void init() {
-		prnd = new ArrayBlockingQueue<ProcessReservationNodeDone>(10);
-		bind = new ArrayBlockingQueue<BillingInfoNodeDone>(10);
+	protected void init() throws IOException {
+		String queueName = null;
+		QueueingConsumer consumer = null;
 		
-//		channel.add(ProcessReservationNodeDone.class, msg -> {
-//			try {
-//				prnd.put(msg);
-//				
-//				joinIncomingMessages();
-//			} catch (Exception e) {
-//				Logger.getLogger(PaymentInfoNode.this.getClass().getSimpleName()).severe("An exception occured: " + e.getMessage());
-//			}
-//		});
-//
-//		channel.add(BillingInfoNodeDone.class, msg -> {
-//			try {
-//				bind.put(msg);
-//				
-//				joinIncomingMessages();
-//			} catch (Exception e) {
-//				Logger.getLogger(PaymentInfoNode.this.getClass().getSimpleName()).severe("An exception occured: " + e.getMessage());
-//			}
-//		});
+		channel.exchangeDeclare(BillingInfoNode.EXCHANGE_NAME, "fanout");
+		channel.exchangeDeclare(ProcessReservationNode.EXCHANGE_NAME, "fanout");
+
+		queueName = channel.queueDeclare().getQueue();
+		channel.queueBind(queueName, BillingInfoNode.EXCHANGE_NAME, "");
+		consumer = new QueueingConsumer(channel);
+        channel.basicConsume(queueName, true, consumer);
+        consumers.add(consumer);
+
+		queueName = channel.queueDeclare().getQueue();
+		channel.queueBind(queueName, ProcessReservationNode.EXCHANGE_NAME, "");
+		consumer = new QueueingConsumer(channel);
+        channel.basicConsume(queueName, true, consumer);
+        consumers.add(consumer);
+
+        
+        channel.exchangeDeclare(EXCHANGE_NAME, "fanout");
 	}
 
 	private void joinIncomingMessages() throws InterruptedException {
 		if ((prnd.size() > 0) && (bind.size() > 0)) {
 			Map<Integer, Object> message = new HashMap<Integer, Object>();
 			
-			message.put(KEY_PROCESS_RESERVATION_NODE_DONE, prnd.take());
-			message.put(KEY_BILLING_INFO_NODE_DONE, bind.take());
-			
-			onMessageReceived(message);
+			message.put(KEY_TRAVEL_INFO, prnd.take());
+			message.put(KEY_BILLING_INFO, bind.take());
 		}
 	}
 	
 	@Override
 	protected void processMessage(Object message) {
-		ProcessReservationNodeDone prndm = null;
-		BillingInfoNodeDone bindm = null;
+		TravelInfo ti = null;
+		BillingInfo bi = null;
 		
 		try {
-			prndm = (ProcessReservationNodeDone) ((Map<Integer, Object>) message).get(KEY_PROCESS_RESERVATION_NODE_DONE);
-			bindm = (BillingInfoNodeDone) ((Map<Integer, Object>) message).get(KEY_BILLING_INFO_NODE_DONE);
+			ti = (TravelInfo) ((Map<Integer, Object>) message).get(KEY_TRAVEL_INFO);
+			bi = (BillingInfo) ((Map<Integer, Object>) message).get(KEY_BILLING_INFO);
 
-			billingInfo = bindm.getBillingInfo();				
+			billingInfo = bi;				
 			NodeBehavior.paymentInfoBehavior(billingInfo);
 
 			gui.notify(null, billingInfo);
@@ -102,5 +108,16 @@ public class PaymentInfoNode extends AbstractNode {
 		} catch (Exception e) {
 			Logger.getLogger(PaymentInfoNode.this.getClass().getSimpleName()).severe("An exception occured: " + e.getMessage());
 		}
+	}
+
+	@Override
+	protected Object nextMessage() throws Exception {
+		// TODO Auto-generated method stub
+		Map<Integer, Object> message = new HashMap<Integer, Object>();
+		
+		message.put(KEY_BILLING_INFO, Serializer.deserialize(consumers.get(0).nextDelivery().getBody()));
+		message.put(KEY_TRAVEL_INFO, Serializer.deserialize(consumers.get(1).nextDelivery().getBody()));
+		
+		return message;
 	}
 }

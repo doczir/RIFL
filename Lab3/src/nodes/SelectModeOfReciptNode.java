@@ -9,6 +9,10 @@ import java.io.IOException;
 
 import javax.swing.JButton;
 
+import util.Serializer;
+
+import com.rabbitmq.client.QueueingConsumer;
+
 import model.BillingInfo;
 import nodes.PaymentInfoNode.PaymentInfoNodeDone;
 
@@ -18,12 +22,29 @@ public class SelectModeOfReciptNode extends AbstractNode {
 	private BillingInfo billingInfo;
 
 	
+	public static String EXCHANGE_NAME =  "EXCHANGE_SMOR";
+	
+	
 	public SelectModeOfReciptNode() throws IOException {
 		super();
 	}
 
 	@Override
-	protected void init() {
+	protected void init() throws IOException {
+		channel.exchangeDeclare(PaymentInfoNode.EXCHANGE_NAME, "fanout");
+
+		String queueName = channel.queueDeclare().getQueue();
+		
+		channel.queueBind(queueName, PaymentInfoNode.EXCHANGE_NAME, "");
+
+		QueueingConsumer consumer = new QueueingConsumer(channel);
+        channel.basicConsume(queueName, true, consumer);
+
+        consumers.add(consumer);
+        
+        
+        channel.exchangeDeclare(EXCHANGE_NAME, "fanout");		
+		
 //		channel.add(PaymentInfoNodeDone.class, msg -> {
 //			onMessageReceived(msg);
 //		});
@@ -31,19 +52,20 @@ public class SelectModeOfReciptNode extends AbstractNode {
 
 	@Override
 	protected void processMessage(Object message) {
-		PaymentInfoNodeDone msg = (PaymentInfoNodeDone) message;
-
 		gui.enable();
 		
-		billingInfo = msg.getBillingInfo();
+		billingInfo = (BillingInfo) message;
 
 		gui.notify(null, billingInfo);
 	}
 	
 	@Override
-	public void next() {
+	public void next() throws IOException {
 		gui.disable();
 //		channel.broadcast(new SelectModeOfReciptDone(billingInfo, delivery));
+		
+		channel.basicPublish(EXCHANGE_NAME, "", null, Serializer.serialize(billingInfo));
+		
 		synchronized (lock) {
 			lock.notify();
 		}

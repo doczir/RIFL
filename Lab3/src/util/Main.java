@@ -2,6 +2,10 @@ package util;
 
 import java.io.IOException;
 
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+
 import gui.GUI;
 import gui.SMORGUI;
 import nodes.BillingInfoNode;
@@ -17,7 +21,8 @@ public class Main {
 
 	public static String CHANNEL_ADDRESS;
 
-	public static void main(String[] args) throws InterruptedException, IOException {
+	public static void main(String[] args) throws InterruptedException, IOException, ClassNotFoundException {
+		
 		if (args.length != 1) {
 			return;
 		}
@@ -31,5 +36,13 @@ public class Main {
 		new GUI("ProcessPaymentNode", new ProcessPaymentNode());
 		new SMORGUI("SelectModeOfReciptNode", new SelectModeOfReciptNode());
 		new GUI("DeliveryAddress", new DeliveryAddressNode());
+		
+		ConnectionFactory factory = new ConnectionFactory();
+		factory.setHost(Main.CHANNEL_ADDRESS);
+		Connection connection = factory.newConnection();
+		Channel channel = connection.createChannel();
+		
+		channel.basicPublish("EXCHANGE_START", "", null, Serializer.serialize("Start"));
+
 	}
 }

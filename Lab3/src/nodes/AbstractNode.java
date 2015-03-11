@@ -3,26 +3,28 @@ package nodes;
 import gui.GUI;
 
 import java.io.IOException;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
-import util.Main;
 import node.Node;
+import util.Main;
+import util.Serializer;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.QueueingConsumer;
 
-public abstract class AbstractNode implements Node {
-
+public abstract class AbstractNode implements Node {	
 	protected GUI gui;
-	protected BlockingQueue<Object> queue;
 	protected Object lock;
 	protected Channel channel;
+	
+	protected List<QueueingConsumer> consumers = null;
+	
 
 	public AbstractNode() throws IOException {
-		this.queue = new ArrayBlockingQueue<Object>(10);
 		lock = new Object();
 
 		ConnectionFactory factory = new ConnectionFactory();
@@ -30,6 +32,8 @@ public abstract class AbstractNode implements Node {
 		Connection connection = factory.newConnection();
 		channel = connection.createChannel();
 
+		consumers = new ArrayList<QueueingConsumer>();
+		
 		init();
 
 		new Thread(() -> {
@@ -48,6 +52,7 @@ public abstract class AbstractNode implements Node {
 						}
 					}
 				} catch (Exception e) {
+					e.printStackTrace();
 					Logger.getLogger(this.getClass().getSimpleName()).severe(
 							"An exception occured: " + e.getMessage());
 				}
@@ -60,37 +65,28 @@ public abstract class AbstractNode implements Node {
 		this.gui = gui;
 	}
 
-	protected void onMessageReceived(Object msg) {
-		try {
-			queue.put(msg);
 
-			if (gui != null) {
-				gui.setQueueSize(queue.size());
-			}
-		} catch (Exception e) {
-			Logger.getLogger(this.getClass().getSimpleName()).severe(
-					"An exception occured: " + e.getMessage());
-		}
-	}
-
-	protected Object nextMessage() throws IOException {
+	protected Object nextMessage() throws Exception {
 		Object result = null;
 
 		try {
-			result = queue.take();
+			//result = queue.take();
+			result = Serializer.deserialize(consumers.get(0).nextDelivery().getBody());
 
 			if (gui != null) {
-				gui.setQueueSize(queue.size());
+				gui.setQueueSize(-1);
 			}
 		} catch (Exception e) {
 			Logger.getLogger(this.getClass().getSimpleName()).severe(
 					"An exception occured: " + e.getMessage());
+			
+			e.printStackTrace();
 		}
 
 		return result;
 	}
 
-	protected abstract void init();
+	protected abstract void init() throws IOException;
 
 	protected abstract void processMessage(Object message);
 }

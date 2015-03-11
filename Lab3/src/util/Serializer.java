@@ -11,12 +11,18 @@ public class Serializer {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         ObjectOutputStream o = new ObjectOutputStream(b);
         o.writeObject(obj);
-        return b.toByteArray();
+        
+        o.close();
+
+        byte[] byteArray = b.toByteArray();
+		return byteArray;
     }
 
     public static Object deserialize(byte[] bytes) throws IOException, ClassNotFoundException {
         ByteArrayInputStream b = new ByteArrayInputStream(bytes);
         ObjectInputStream o = new ObjectInputStream(b);
-        return o.readObject();
+        Object readObject = o.readObject();
+        o.close();
+		return readObject;
     }
 }
