@@ -15,7 +15,15 @@ import nodes.TravelInfoNode;
 public class Main {
 
 
-	public static void main(String[] args) throws InterruptedException, IOException {		
+	public static String CHANNEL_ADDRESS;
+
+	public static void main(String[] args) throws InterruptedException, IOException {
+		if (args.length != 1) {
+			return;
+		}
+		
+		CHANNEL_ADDRESS = args[0];
+		
 		new GUI("TravelInfoNode", new TravelInfoNode());
 		new GUI("ProcessReservationNode", new ProcessReservationNode());
 		new GUI("BillingInfoNode", new BillingInfoNode());
