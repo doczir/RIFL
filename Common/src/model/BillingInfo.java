@@ -1,6 +1,8 @@
 package model;
 
-public class BillingInfo {
+import java.io.Serializable;
+
+public class BillingInfo implements Serializable {
 
 	private String creditCardOwner;
 	

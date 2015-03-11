@@ -1,8 +1,9 @@
 package model;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class TravelInfo {
+public class TravelInfo implements Serializable {
 	private int id;
 	private String origin;
 	private String destination;
