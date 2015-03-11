@@ -7,6 +7,12 @@ import util.NodeBehavior;
 
 public class TravelInfoNode extends AbstractNode {
 
+	//in
+	private static final String START = "start";
+	
+	//out
+	private static final String TID = "travel_info_done";
+	
 	private TravelInfo travelInfo;
 
 	public TravelInfoNode() throws IOException {

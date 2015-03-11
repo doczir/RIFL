@@ -7,6 +7,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.logging.Logger;
 
+import util.Main;
 import node.Node;
 
 import com.rabbitmq.client.Channel;
@@ -20,34 +21,35 @@ public abstract class AbstractNode implements Node {
 	protected Object lock;
 	protected Channel channel;
 
-	public AbstractNode(String... queues) throws IOException {
+	public AbstractNode() throws IOException {
 		this.queue = new ArrayBlockingQueue<Object>(10);
 		lock = new Object();
 
 		ConnectionFactory factory = new ConnectionFactory();
-		factory.setHost("localhost");
+		factory.setHost(Main.CHANNEL_ADDRESS);
 		Connection connection = factory.newConnection();
 		channel = connection.createChannel();
 
 		init();
-		
-		for(String q : queues) {
-			channel.queueDeclare(q, false, false, false, null);
-		}
 
 		new Thread(() -> {
 			while (true) {
-				processMessage(nextMessage());
+				try {
+					processMessage(nextMessage());
 
-				synchronized (lock) {
-					try {
-						lock.wait();
-					} catch (Exception e) {
-						Logger.getLogger(
-								AbstractNode.this.getClass().getSimpleName())
-								.severe("An exception occured: "
-										+ e.getMessage());
+					synchronized (lock) {
+						try {
+							lock.wait();
+						} catch (Exception e) {
+							Logger.getLogger(
+									AbstractNode.this.getClass().getSimpleName())
+									.severe("An exception occured: "
+											+ e.getMessage());
+						}
 					}
+				} catch (Exception e) {
+					Logger.getLogger(this.getClass().getSimpleName()).severe(
+							"An exception occured: " + e.getMessage());
 				}
 			}
 		}).start();
@@ -71,7 +73,7 @@ public abstract class AbstractNode implements Node {
 		}
 	}
 
-	protected Object nextMessage() {
+	protected Object nextMessage() throws IOException {
 		Object result = null;
 
 		try {

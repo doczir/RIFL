@@ -6,17 +6,10 @@ import model.BillingInfo;
 import util.NodeBehavior;
 
 public class BillingInfoNode extends AbstractNode {
-
-	//in
-	private static final String TID = "travel_info_done";
-	
-	//out
-	private static final String BID = "billing_info_done";
-
 	private BillingInfo billingInfo;
 
 	public BillingInfoNode() throws IOException {
-		super(TID, BID);
+		super();
 	}
 
 	@Override
