@@ -9,14 +9,12 @@ import java.io.IOException;
 
 import javax.swing.JButton;
 
+import model.BillingInfo;
 import util.Serializer;
 
 import com.rabbitmq.client.QueueingConsumer;
 
-import model.BillingInfo;
-import nodes.PaymentInfoNode.PaymentInfoNodeDone;
-
-public class SelectModeOfReciptNode extends AbstractNode {
+public class SelectModeOfReciptNode extends BasicAbstractNode {
 
 	private boolean delivery;
 	private BillingInfo billingInfo;
@@ -25,7 +23,7 @@ public class SelectModeOfReciptNode extends AbstractNode {
 	public static String EXCHANGE_NAME =  "EXCHANGE_SMOR";
 	
 	
-	public SelectModeOfReciptNode() throws IOException {
+	public SelectModeOfReciptNode() throws Exception {
 		super();
 	}
 
@@ -37,17 +35,10 @@ public class SelectModeOfReciptNode extends AbstractNode {
 		
 		channel.queueBind(queueName, PaymentInfoNode.EXCHANGE_NAME, "");
 
-		QueueingConsumer consumer = new QueueingConsumer(channel);
+		consumer = new QueueingConsumer(channel);
         channel.basicConsume(queueName, true, consumer);
-
-        consumers.add(consumer);
-        
         
         channel.exchangeDeclare(EXCHANGE_NAME, "fanout");		
-		
-//		channel.add(PaymentInfoNodeDone.class, msg -> {
-//			onMessageReceived(msg);
-//		});
 	}
 
 	@Override
@@ -62,9 +53,10 @@ public class SelectModeOfReciptNode extends AbstractNode {
 	@Override
 	public void next() throws IOException {
 		gui.disable();
-//		channel.broadcast(new SelectModeOfReciptDone(billingInfo, delivery));
-		
-		channel.basicPublish(EXCHANGE_NAME, "", null, Serializer.serialize(billingInfo));
+
+		if (delivery) {
+			channel.basicPublish(EXCHANGE_NAME, "", null, Serializer.serialize(billingInfo));
+		}
 		
 		synchronized (lock) {
 			lock.notify();
@@ -114,25 +106,6 @@ public class SelectModeOfReciptNode extends AbstractNode {
 					setReceiptDelivery();
 				}
 			});
-		}
-	}
-
-	public static class SelectModeOfReciptDone {
-		private boolean isDelivery;
-		private BillingInfo billingInfo;
-
-		public SelectModeOfReciptDone(BillingInfo billingInfo, boolean isDelivery) {
-			super();
-			this.billingInfo = billingInfo;
-			this.isDelivery = isDelivery;
-		}
-
-		public boolean isDelivery() {
-			return isDelivery;
-		}
-		
-		public BillingInfo getBillingInfo() {
-			return billingInfo;
 		}
 	}
 }

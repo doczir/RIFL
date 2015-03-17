@@ -2,19 +2,23 @@ package nodes;
 
 import java.io.IOException;
 
+import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.QueueingConsumer;
 
 import model.TravelInfo;
 import util.NodeBehavior;
 import util.Serializer;
 
-public class TravelInfoNode extends AbstractNode {
+public class TravelInfoNode extends BasicAbstractNode {
 
 	public static String EXCHANGE_NAME = "EXCHANGE_TIN";
 	
 	private TravelInfo travelInfo;
+	
+	private Integer correlationId = 0;
+	
 
-	public TravelInfoNode() throws IOException {
+	public TravelInfoNode() throws Exception {
 		super();
 	}
 	
@@ -27,18 +31,10 @@ public class TravelInfoNode extends AbstractNode {
 		
 		channel.queueBind(queueName, "EXCHANGE_START", "");
 
-		QueueingConsumer consumer = new QueueingConsumer(channel);
+		consumer = new QueueingConsumer(channel);
         channel.basicConsume(queueName, true, consumer);
-
-        consumers.add(consumer);
-        
         
         channel.exchangeDeclare(EXCHANGE_NAME, "fanout");		
-		
-		
-//		channel.add(Start.class, (msg) -> {
-//			onMessageReceived(msg);
-//		});
 	}
 
 	@Override
@@ -51,11 +47,13 @@ public class TravelInfoNode extends AbstractNode {
 
 	@Override
 	public void next() throws IOException {
-//		channel.broadcast(new TravelInfoNodeDone(travelInfo));
-//		channel.broadcast(new Start());
+		BasicProperties props = new BasicProperties()
+				.builder()
+				.correlationId((++correlationId).toString())
+				.build();
 		
-		channel.basicPublish(EXCHANGE_NAME, "", null, Serializer.serialize(travelInfo));
-		channel.basicPublish("EXCHANGE_START", "", null, Serializer.serialize("Start"));
+		channel.basicPublish(EXCHANGE_NAME, "", props, Serializer.serialize(travelInfo));
+		channel.basicPublish("EXCHANGE_START", "", props, Serializer.serialize("Start"));
 		
 		synchronized (lock) {
 			lock.notify();

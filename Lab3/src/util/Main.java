@@ -1,13 +1,10 @@
 package util;
 
-import java.io.IOException;
-
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-
 import gui.GUI;
 import gui.SMORGUI;
+
+import java.io.IOException;
+
 import nodes.BillingInfoNode;
 import nodes.DeliveryAddressNode;
 import nodes.PaymentInfoNode;
@@ -16,12 +13,16 @@ import nodes.ProcessReservationNode;
 import nodes.SelectModeOfReciptNode;
 import nodes.TravelInfoNode;
 
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+
 public class Main {
 
 
 	public static String CHANNEL_ADDRESS;
 
-	public static void main(String[] args) throws InterruptedException, IOException, ClassNotFoundException {
+	public static void main(String[] args) throws Exception {
 		
 		if (args.length != 1) {
 			return;

@@ -2,21 +2,21 @@ package nodes;
 
 import java.io.IOException;
 
-import com.rabbitmq.client.QueueingConsumer;
-
 import model.TravelInfo;
-import nodes.TravelInfoNode.TravelInfoNodeDone;
 import util.NodeBehavior;
 import util.Serializer;
 
-public class ProcessReservationNode extends AbstractNode {
+import com.rabbitmq.client.AMQP.BasicProperties;
+import com.rabbitmq.client.QueueingConsumer;
+
+public class ProcessReservationNode extends BasicAbstractNode {
 
 	private TravelInfo travelInfo;
 
 	public static String EXCHANGE_NAME =  "EXCHANGE_PRN";
 	
 	
-	public ProcessReservationNode() throws IOException {
+	public ProcessReservationNode() throws Exception {
 		super();
 	}
 
@@ -28,17 +28,10 @@ public class ProcessReservationNode extends AbstractNode {
 		
 		channel.queueBind(queueName, TravelInfoNode.EXCHANGE_NAME, "");
 
-		QueueingConsumer consumer = new QueueingConsumer(channel);
+		consumer = new QueueingConsumer(channel);
         channel.basicConsume(queueName, true, consumer);
 
-        consumers.add(consumer);
-        
-        
-        channel.exchangeDeclare(EXCHANGE_NAME, "fanout");		
-		
-//		channel.add(TravelInfoNodeDone.class, (msg) -> {
-//			onMessageReceived(msg);
-//		});
+        channel.exchangeDeclare(EXCHANGE_NAME, "fanout");
 	}
 
 	@Override
@@ -52,9 +45,16 @@ public class ProcessReservationNode extends AbstractNode {
 	@Override
 	public void next() throws IOException {
 		gui.disable();
-//		channel.broadcast(new ProcessReservationNodeDone(travelInfo));
 		
-		channel.basicPublish(EXCHANGE_NAME, "", null, Serializer.serialize(travelInfo));
+		BasicProperties props = null;
+		if (lastMessage.getProperties() != null && lastMessage.getProperties().getCorrelationId() != null) {
+			props = new BasicProperties()
+					.builder()
+					.correlationId(lastMessage.getProperties().getCorrelationId())
+					.build();
+		}
+		
+		channel.basicPublish(EXCHANGE_NAME, "", props, Serializer.serialize(travelInfo));
 		
 		synchronized (lock) {
 			lock.notify();		

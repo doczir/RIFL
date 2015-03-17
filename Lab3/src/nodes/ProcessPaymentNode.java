@@ -1,22 +1,20 @@
 package nodes;
 
 import java.io.IOException;
-import java.nio.channels.Channel;
-
-import com.rabbitmq.client.QueueingConsumer;
 
 import model.BillingInfo;
-import nodes.PaymentInfoNode.PaymentInfoNodeDone;
 import util.NodeBehavior;
 import util.Serializer;
 
-public class ProcessPaymentNode extends AbstractNode {
+import com.rabbitmq.client.QueueingConsumer;
+
+public class ProcessPaymentNode extends BasicAbstractNode {
 	
 	private BillingInfo billingInfo;
 
 	public static String EXCHANGE_NAME =  "EXCHANGE_PPN";
 	
-	public ProcessPaymentNode() throws IOException {
+	public ProcessPaymentNode() throws Exception {
 		super();
 	}
 	
@@ -28,18 +26,10 @@ public class ProcessPaymentNode extends AbstractNode {
 		
 		channel.queueBind(queueName, PaymentInfoNode.EXCHANGE_NAME, "");
 
-		QueueingConsumer consumer = new QueueingConsumer(channel);
+		consumer = new QueueingConsumer(channel);
         channel.basicConsume(queueName, true, consumer);
 
-        consumers.add(consumer);
-        
-        
         channel.exchangeDeclare(EXCHANGE_NAME, "fanout");
-		
-		
-//		channel.add(PaymentInfoNodeDone.class, msg -> {
-//			onMessageReceived(msg);
-//		});
 	}
 
 	@Override
@@ -53,7 +43,6 @@ public class ProcessPaymentNode extends AbstractNode {
 	@Override
 	public void next() throws IOException {
 		gui.disable();
-//		channel.broadcast(new ProcessPaymentNodeDone(billingInfo));
 		
 		channel.basicPublish(EXCHANGE_NAME, "", null, Serializer.serialize(billingInfo));
 		

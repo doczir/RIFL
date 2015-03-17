@@ -7,13 +7,14 @@ import util.NodeBehavior;
 import util.Serializer;
 
 import com.rabbitmq.client.QueueingConsumer;
+import com.rabbitmq.client.AMQP.BasicProperties;
 
-public class BillingInfoNode extends AbstractNode {
+public class BillingInfoNode extends BasicAbstractNode {
 	private BillingInfo billingInfo;
 
 	public static String EXCHANGE_NAME = "EXCHANGE_BIN";
 	
-	public BillingInfoNode() throws IOException {
+	public BillingInfoNode() throws Exception {
 		super();
 	}
 
@@ -25,11 +26,8 @@ public class BillingInfoNode extends AbstractNode {
 		
 		channel.queueBind(queueName, TravelInfoNode.EXCHANGE_NAME, "");
 
-		QueueingConsumer consumer = new QueueingConsumer(channel);
+		consumer = new QueueingConsumer(channel);
         channel.basicConsume(queueName, true, consumer);
-
-        consumers.add(consumer);
-        
         
         channel.exchangeDeclare(EXCHANGE_NAME, "fanout");
 	}
@@ -48,8 +46,15 @@ public class BillingInfoNode extends AbstractNode {
 	public void next() throws IOException {
 		gui.disable();
 		
-		// channel.broadcast(new BillingInfoNodeDone(billingInfo));
-		channel.basicPublish(EXCHANGE_NAME, "", null, Serializer.serialize(billingInfo));
+		BasicProperties props = null;
+		if (lastMessage.getProperties() != null && lastMessage.getProperties().getCorrelationId() != null) {
+			props = new BasicProperties()
+					.builder()
+					.correlationId(lastMessage.getProperties().getCorrelationId())
+					.build();
+		}
+		
+		channel.basicPublish(EXCHANGE_NAME, "", props, Serializer.serialize(billingInfo));
 		
 		synchronized (lock) {
 			lock.notify();

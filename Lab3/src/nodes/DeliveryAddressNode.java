@@ -1,24 +1,21 @@
 package nodes;
 
-import gui.SMORGUI;
-
 import java.io.IOException;
 
 import model.BillingInfo;
-import nodes.SelectModeOfReciptNode.SelectModeOfReciptDone;
 import util.NodeBehavior;
 import util.Serializer;
 
 import com.rabbitmq.client.QueueingConsumer;
 
-public class DeliveryAddressNode extends AbstractNode {
+public class DeliveryAddressNode extends BasicAbstractNode {
 
 	private BillingInfo billingInfo;
 	
 	public static String EXCHANGE_NAME = "EXCHANGE_DAN";
 	
 
-	public DeliveryAddressNode() throws IOException {
+	public DeliveryAddressNode() throws Exception {
 		super();
 	}
 
@@ -30,11 +27,8 @@ public class DeliveryAddressNode extends AbstractNode {
 		
 		channel.queueBind(queueName, SelectModeOfReciptNode.EXCHANGE_NAME, "");
 
-		QueueingConsumer consumer = new QueueingConsumer(channel);
+		consumer = new QueueingConsumer(channel);
         channel.basicConsume(queueName, true, consumer);
-
-        consumers.add(consumer);
-        
         
         channel.exchangeDeclare(EXCHANGE_NAME, "fanout");
 	}
