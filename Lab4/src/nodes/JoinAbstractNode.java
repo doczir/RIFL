@@ -10,46 +10,48 @@ import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.logging.Logger;
 
-import util.Serializer;
+import javax.jms.BytesMessage;
+import javax.jms.JMSException;
+import javax.jms.QueueReceiver;
 
-import com.rabbitmq.client.QueueingConsumer;
-import com.rabbitmq.client.QueueingConsumer.Delivery;
+import util.Serializer;
 
 public abstract class JoinAbstractNode extends AbstractNode {
 
+	public static final String KEY_CORRELATION_ID = "correlation_id";
+
 	protected Queue<Object> queue;
 
-	protected List<QueueingConsumer> consumers;
+	protected List<QueueReceiver> receivers;
 
-	protected Map<QueueingConsumer, Integer> consumerKeys;
+	protected Map<QueueReceiver, Integer> receiverKeys;
 
-	protected Map<QueueingConsumer, Map<String, Delivery>> consumerMessages;
+	protected Map<QueueReceiver, Map<String, BytesMessage>> consumerMessages;
 
 	public JoinAbstractNode() throws Exception {
 		super();
 
-		if (consumers == null || consumers.isEmpty()) {
+		if (receivers == null || receivers.isEmpty()) {
 			throw new Exception(
 					"A JoinAbstractNode must have at least 2 consumers!");
 		}
 
-		if (consumerKeys == null || consumerKeys.isEmpty()) {
+		if (receiverKeys == null || receiverKeys.isEmpty()) {
 			throw new Exception(
 					"A JoinAbstractNode must have at least 2 consumers and corresponding keys!");
 		}
 
-		for (final QueueingConsumer consumer : consumers) {
+		for (final QueueReceiver consumer : receivers) {
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
 
 					while (true) {
 						try {
-							Delivery delivery = consumer.nextDelivery();
+							BytesMessage message = (BytesMessage) consumer
+									.receive();
 
-							if (delivery.getProperties() == null
-									|| delivery.getProperties()
-											.getCorrelationId() == null) {
+							if (message.getStringProperty(KEY_CORRELATION_ID) == null) {
 								Logger.getLogger(
 										JoinAbstractNode.this.getClass()
 												.getSimpleName())
@@ -59,18 +61,19 @@ public abstract class JoinAbstractNode extends AbstractNode {
 										this.getClass().getSimpleName()).info(
 										"Message arrived!");
 
-								Map<String, Delivery> messages = consumerMessages
+								Map<String, BytesMessage> messages = consumerMessages
 										.get(consumer);
 								if (messages == null) {
-									messages = new HashMap<String, Delivery>();
+									messages = new HashMap<String, BytesMessage>();
 
 									consumerMessages.put(consumer, messages);
 								}
 
-								messages.put(delivery.getProperties()
-										.getCorrelationId(), delivery);
+								messages.put(message
+										.getStringProperty(KEY_CORRELATION_ID),
+										message);
 
-								checkCoherentMessages(delivery);
+								checkCoherentMessages(message);
 							}
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -85,26 +88,27 @@ public abstract class JoinAbstractNode extends AbstractNode {
 	}
 
 	@Override
-	protected void init() throws IOException {
+	protected void init() throws Exception {
 		queue = new LinkedList<Object>();
 
-		consumers = new ArrayList<QueueingConsumer>();
+		receivers = new ArrayList<QueueReceiver>();
 
-		consumerKeys = new HashMap<QueueingConsumer, Integer>();
+		receiverKeys = new HashMap<QueueReceiver, Integer>();
 
-		consumerMessages = new HashMap<QueueingConsumer, Map<String, Delivery>>();
+		consumerMessages = new HashMap<QueueReceiver, Map<String, BytesMessage>>();
 	}
 
-	protected void checkCoherentMessages(Delivery message)
-			throws ClassNotFoundException, IOException {
+	protected void checkCoherentMessages(BytesMessage message)
+			throws ClassNotFoundException, IOException, JMSException {
 		synchronized (lock) {
-			String correlationId = message.getProperties().getCorrelationId();
+			String correlationId = message
+					.getStringProperty(KEY_CORRELATION_ID);
 
 			Logger.getLogger(this.getClass().getSimpleName()).info(
 					"checkCoherentMessages::correlationId:" + correlationId);
 
 			boolean foundAll = true;
-			for (QueueingConsumer consumer : consumers) {
+			for (QueueReceiver consumer : receivers) {
 				if (consumerMessages.get(consumer) == null
 						|| !consumerMessages.get(consumer).containsKey(
 								correlationId)) {
@@ -118,17 +122,20 @@ public abstract class JoinAbstractNode extends AbstractNode {
 				Logger.getLogger(this.getClass().getSimpleName()).info(
 						"Coherent messages were found!");
 
+				byte[] data;
 				Map<Integer, Object> result = new HashMap<Integer, Object>();
 
-				for (Entry<QueueingConsumer, Map<String, Delivery>> entry : consumerMessages
+				for (Entry<QueueReceiver, Map<String, BytesMessage>> entry : consumerMessages
 						.entrySet()) {
-					result.put(
-							consumerKeys.get(entry.getKey()),
-							Serializer.deserialize(entry.getValue()
-									.get(correlationId).getBody()));
 
-					entry.getValue()
-							.remove(entry.getValue().get(correlationId));
+					data = new byte[(int) entry.getValue().get(correlationId)
+							.getBodyLength()];
+					entry.getValue().get(correlationId).readBytes(data);
+
+					result.put(receiverKeys.get(entry.getKey()),
+							Serializer.deserialize(data));
+
+					entry.getValue().remove(entry.getValue().get(correlationId));
 				}
 
 				queue.add(result);

@@ -1,9 +1,8 @@
 package nodes;
 
-import java.io.IOException;
-
-import com.rabbitmq.client.AMQP.BasicProperties;
-import com.rabbitmq.client.QueueingConsumer;
+import javax.jms.BytesMessage;
+import javax.jms.Queue;
+import javax.jms.QueueSender;
 
 import model.TravelInfo;
 import util.NodeBehavior;
@@ -11,11 +10,19 @@ import util.Serializer;
 
 public class TravelInfoNode extends BasicAbstractNode {
 
-	public static String EXCHANGE_NAME = "EXCHANGE_TIN";
+	public static String QUEUE_NAME_BIN = "queue/QUEUE_TIN_BIN";
+	
+	public static String QUEUE_NAME_PRN = "queue/QUEUE_TIN_PRN";
 	
 	private TravelInfo travelInfo;
 	
 	private Integer correlationId = 0;
+	
+	private QueueSender sender_start;
+	
+	protected QueueSender sender_out_bin;
+	
+	protected QueueSender sender_out_prn;
 	
 
 	public TravelInfoNode() throws Exception {
@@ -24,17 +31,20 @@ public class TravelInfoNode extends BasicAbstractNode {
 	
 
 	@Override
-	protected void init() throws IOException {
-		channel.exchangeDeclare("EXCHANGE_START", "fanout");
-
-		String queueName = channel.queueDeclare().getQueue();
+	protected void init() throws Exception {
+		Queue queue_start = (Queue) initialContext.lookup("queue/start");
 		
-		channel.queueBind(queueName, "EXCHANGE_START", "");
-
-		consumer = new QueueingConsumer(channel);
-        channel.basicConsume(queueName, true, consumer);
-        
-        channel.exchangeDeclare(EXCHANGE_NAME, "fanout");		
+		Queue queue_out_bin = (Queue) initialContext.lookup(QUEUE_NAME_BIN);
+		
+		Queue queue_out_prn = (Queue) initialContext.lookup(QUEUE_NAME_PRN);
+		
+		receiver = session.createReceiver(queue_start);
+		
+		sender_out_bin = session.createSender(queue_out_bin);
+		
+		sender_out_prn = session.createSender(queue_out_prn);
+		
+		sender_start = session.createSender(queue_start);
 	}
 
 	@Override
@@ -46,14 +56,17 @@ public class TravelInfoNode extends BasicAbstractNode {
 	}	
 
 	@Override
-	public void next() throws IOException {
-		BasicProperties props = new BasicProperties()
-				.builder()
-				.correlationId((++correlationId).toString())
-				.build();
+	public void next() throws Exception {
+		BytesMessage message = session.createBytesMessage();
+		message.setStringProperty(JoinAbstractNode.KEY_CORRELATION_ID, (++correlationId).toString());
+		message.writeBytes(Serializer.serialize(travelInfo));
 		
-		channel.basicPublish(EXCHANGE_NAME, "", props, Serializer.serialize(travelInfo));
-		channel.basicPublish("EXCHANGE_START", "", props, Serializer.serialize("Start"));
+		sender_out_bin.send(message);
+		sender_out_prn.send(message);
+
+		BytesMessage sm = session.createBytesMessage();
+		sm.writeBytes(Serializer.serialize("Start"));
+		sender_start.send(sm);
 		
 		synchronized (lock) {
 			lock.notify();

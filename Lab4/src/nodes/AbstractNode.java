@@ -4,26 +4,34 @@ import gui.GUI;
 
 import java.io.IOException;
 
-import node.Node;
-import util.Main;
+import javax.jms.QueueConnection;
+import javax.jms.QueueConnectionFactory;
+import javax.jms.QueueSession;
+import javax.jms.Session;
+import javax.naming.InitialContext;
 
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
+import node.Node;
 
 public abstract class AbstractNode implements Node {	
 	protected GUI gui;
 	protected Object lock;
-	protected Channel channel;
+	protected InitialContext initialContext;
+	protected QueueConnection connection;
+	protected QueueSession session;
 	
 
-	public AbstractNode() throws IOException {
+	public AbstractNode() throws Exception {
 		lock = new Object();
-
-		ConnectionFactory factory = new ConnectionFactory();
-		factory.setHost(Main.CHANNEL_ADDRESS);
-		Connection connection = factory.newConnection();
-		channel = connection.createChannel();
+		
+		initialContext = new InitialContext();
+		
+		QueueConnectionFactory qcf = (QueueConnectionFactory) initialContext.lookup("QueueConnectionFactory");
+		
+		connection = qcf.createQueueConnection();
+		
+		connection.start();
+		
+		session = connection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
 		
 		init();
 	}
@@ -34,7 +42,7 @@ public abstract class AbstractNode implements Node {
 	}
 
 
-	protected abstract void init() throws IOException;
+	protected abstract void init() throws Exception;
 
 	protected abstract void processMessage(Object message);
 }

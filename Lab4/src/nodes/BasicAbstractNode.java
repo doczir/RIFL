@@ -2,20 +2,20 @@ package nodes;
 
 import java.util.logging.Logger;
 
+import javax.jms.BytesMessage;
+import javax.jms.QueueReceiver;
+
 import util.Serializer;
 
-import com.rabbitmq.client.QueueingConsumer;
-import com.rabbitmq.client.QueueingConsumer.Delivery;
-
 public abstract class BasicAbstractNode extends AbstractNode {
-	protected Delivery lastMessage;
+	protected BytesMessage lastMessage;
 
-	protected QueueingConsumer consumer;
+	protected QueueReceiver receiver;
 
 	public BasicAbstractNode() throws Exception {
 		super();
 
-		if (consumer == null) {
+		if (receiver == null) {
 			throw new Exception("A BasicAbstractNode must have a consumer!");
 		}
 
@@ -54,9 +54,12 @@ public abstract class BasicAbstractNode extends AbstractNode {
 		Object result = null;
 
 		try {
-			lastMessage = consumer.nextDelivery();
+			lastMessage = (BytesMessage) receiver.receive();
 
-			result = Serializer.deserialize(lastMessage.getBody());
+			byte[] data = new byte[(int) lastMessage.getBodyLength()];
+			lastMessage.readBytes(data);
+			
+			result = Serializer.deserialize(data);
 
 			if (gui != null) {
 				gui.setQueueSize(-1);

@@ -1,35 +1,35 @@
 package nodes;
 
-import java.io.IOException;
+import javax.jms.BytesMessage;
+import javax.jms.Queue;
+import javax.jms.QueueSender;
 
 import model.BillingInfo;
 import util.NodeBehavior;
 import util.Serializer;
 
-import com.rabbitmq.client.QueueingConsumer;
-
 public class ProcessPaymentNode extends BasicAbstractNode {
 	
 	private BillingInfo billingInfo;
 
-	public static String EXCHANGE_NAME =  "EXCHANGE_PPN";
+	public static String QUEUE_NAME =  "queue/QUEUE_PPN";
+	
+	protected QueueSender sender_out;
+	
+	
 	
 	public ProcessPaymentNode() throws Exception {
 		super();
 	}
 	
 	@Override
-	protected void init() throws IOException {
-		channel.exchangeDeclare(PaymentInfoNode.EXCHANGE_NAME, "fanout");
-
-		String queueName = channel.queueDeclare().getQueue();
+	protected void init() throws Exception {
+		Queue queue_in = (Queue) initialContext.lookup(PaymentInfoNode.QUEUE_NAME_PPN);
+		Queue queue_out = (Queue) initialContext.lookup(QUEUE_NAME);
 		
-		channel.queueBind(queueName, PaymentInfoNode.EXCHANGE_NAME, "");
-
-		consumer = new QueueingConsumer(channel);
-        channel.basicConsume(queueName, true, consumer);
-
-        channel.exchangeDeclare(EXCHANGE_NAME, "fanout");
+		receiver = session.createReceiver(queue_in);
+		
+		sender_out = session.createSender(queue_out);		
 	}
 
 	@Override
@@ -41,10 +41,13 @@ public class ProcessPaymentNode extends BasicAbstractNode {
 	}	
 
 	@Override
-	public void next() throws IOException {
+	public void next() throws Exception {
 		gui.disable();
 		
-		channel.basicPublish(EXCHANGE_NAME, "", null, Serializer.serialize(billingInfo));
+		BytesMessage message = session.createBytesMessage();
+		message.writeBytes(Serializer.serialize(billingInfo));
+		
+		sender_out.send(message);
 		
 		synchronized (lock) {
 			lock.notify();		

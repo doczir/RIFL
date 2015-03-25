@@ -1,15 +1,17 @@
 package nodes;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.logging.Logger;
+
+import javax.jms.BytesMessage;
+import javax.jms.Queue;
+import javax.jms.QueueReceiver;
+import javax.jms.QueueSender;
 
 import model.BillingInfo;
 import model.TravelInfo;
 import util.NodeBehavior;
 import util.Serializer;
-
-import com.rabbitmq.client.QueueingConsumer;
 
 public class PaymentInfoNode extends JoinAbstractNode {
 	private static final int KEY_TRAVEL_INFO = 0;
@@ -18,7 +20,11 @@ public class PaymentInfoNode extends JoinAbstractNode {
 	private BillingInfo billingInfo;
 	
 	
-	public static String EXCHANGE_NAME = "EXCHANGE_PIN";
+	public static String QUEUE_NAME_SMORN = "queue/QUEUE_PIN_SMORN";
+	public static String QUEUE_NAME_PPN = "queue/QUEUE_PIN_PPN";
+	
+	protected QueueSender sender_out_smorn;
+	protected QueueSender sender_out_ppn;
 	
 	
 	public PaymentInfoNode() throws Exception {
@@ -26,9 +32,13 @@ public class PaymentInfoNode extends JoinAbstractNode {
 	}
 
 	@Override
-	public void next() throws IOException {
+	public void next() throws Exception {
 		synchronized (lock) {
-			channel.basicPublish(EXCHANGE_NAME, "", null, Serializer.serialize(billingInfo));
+			BytesMessage message = session.createBytesMessage();
+			message.writeBytes(Serializer.serialize(billingInfo));
+			
+			sender_out_smorn.send(message);
+			sender_out_ppn.send(message);
 			
 			billingInfo = null;
 			
@@ -54,30 +64,26 @@ public class PaymentInfoNode extends JoinAbstractNode {
 	}
 
 	@Override
-	protected void init() throws IOException {
+	protected void init() throws Exception {
 		super.init();
+
+		Queue queue_in_bin = (Queue) initialContext.lookup(BillingInfoNode.QUEUE_NAME);
+		Queue queue_in_prn = (Queue) initialContext.lookup(ProcessReservationNode.QUEUE_NAME);
+		Queue queue_out_smorn = (Queue) initialContext.lookup(QUEUE_NAME_SMORN);
+		Queue queue_out_ppn = (Queue) initialContext.lookup(QUEUE_NAME_PPN);
 		
-		String queueName = null;
-		QueueingConsumer consumer = null;
+		QueueReceiver receiver = null;
 		
-		channel.exchangeDeclare(BillingInfoNode.EXCHANGE_NAME, "fanout");
-		channel.exchangeDeclare(ProcessReservationNode.EXCHANGE_NAME, "fanout");
-
-		queueName = channel.queueDeclare().getQueue();
-		channel.queueBind(queueName, BillingInfoNode.EXCHANGE_NAME, "");
-		consumer = new QueueingConsumer(channel);
-        channel.basicConsume(queueName, true, consumer);
-        consumers.add(consumer);
-        consumerKeys.put(consumer, KEY_BILLING_INFO);
-
-		queueName = channel.queueDeclare().getQueue();
-		channel.queueBind(queueName, ProcessReservationNode.EXCHANGE_NAME, "");
-		consumer = new QueueingConsumer(channel);
-        channel.basicConsume(queueName, true, consumer);
-        consumers.add(consumer);
-        consumerKeys.put(consumer, KEY_TRAVEL_INFO);
-
-        channel.exchangeDeclare(EXCHANGE_NAME, "fanout");
+		receiver = session.createReceiver(queue_in_bin);
+		receivers.add(receiver);
+		receiverKeys.put(receiver, KEY_BILLING_INFO);
+		
+		receiver = session.createReceiver(queue_in_prn);
+		receivers.add(receiver);
+		receiverKeys.put(receiver, KEY_TRAVEL_INFO);
+		
+		sender_out_smorn = session.createSender(queue_out_smorn);
+		sender_out_ppn = session.createSender(queue_out_ppn);
 	}
 	
 	@Override

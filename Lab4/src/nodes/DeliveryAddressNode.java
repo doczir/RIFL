@@ -1,18 +1,21 @@
 package nodes;
 
-import java.io.IOException;
+import javax.jms.BytesMessage;
+import javax.jms.Queue;
+import javax.jms.QueueSender;
 
 import model.BillingInfo;
 import util.NodeBehavior;
 import util.Serializer;
 
-import com.rabbitmq.client.QueueingConsumer;
-
 public class DeliveryAddressNode extends BasicAbstractNode {
 
 	private BillingInfo billingInfo;
 	
-	public static String EXCHANGE_NAME = "EXCHANGE_DAN";
+	public static String QUEUE_NAME = "queue/QUEUE_DAN";
+	
+	protected QueueSender sender_out;
+
 	
 
 	public DeliveryAddressNode() throws Exception {
@@ -20,17 +23,13 @@ public class DeliveryAddressNode extends BasicAbstractNode {
 	}
 
 	@Override
-	protected void init() throws IOException {
-		channel.exchangeDeclare(SelectModeOfReciptNode.EXCHANGE_NAME, "fanout");
-
-		String queueName = channel.queueDeclare().getQueue();
+	protected void init() throws Exception {
+		Queue queue_in = (Queue) initialContext.lookup(SelectModeOfReciptNode.QUEUE_NAME);
+		Queue queue_out = (Queue) initialContext.lookup(QUEUE_NAME);
 		
-		channel.queueBind(queueName, SelectModeOfReciptNode.EXCHANGE_NAME, "");
-
-		consumer = new QueueingConsumer(channel);
-        channel.basicConsume(queueName, true, consumer);
-        
-        channel.exchangeDeclare(EXCHANGE_NAME, "fanout");
+		receiver = session.createReceiver(queue_in);
+		
+		sender_out = session.createSender(queue_out);
 	}
 
 	@Override
@@ -45,11 +44,13 @@ public class DeliveryAddressNode extends BasicAbstractNode {
 	}	
 
 	@Override
-	public void next() throws IOException {
+	public void next() throws Exception {
 		gui.disable();
-//		channel.broadcast(new DeliveryAddressDone(billingInfo));
+
+		BytesMessage message = session.createBytesMessage();
+		message.writeBytes(Serializer.serialize(billingInfo));
 		
-		channel.basicPublish(EXCHANGE_NAME, "", null, Serializer.serialize(billingInfo));
+		sender_out.send(message);
 		
 		synchronized (lock) {
 			lock.notify();

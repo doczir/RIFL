@@ -1,19 +1,21 @@
 package nodes;
 
-import java.io.IOException;
+import javax.jms.BytesMessage;
+import javax.jms.Queue;
+import javax.jms.QueueSender;
 
 import model.TravelInfo;
 import util.NodeBehavior;
 import util.Serializer;
 
-import com.rabbitmq.client.AMQP.BasicProperties;
-import com.rabbitmq.client.QueueingConsumer;
-
 public class ProcessReservationNode extends BasicAbstractNode {
 
 	private TravelInfo travelInfo;
 
-	public static String EXCHANGE_NAME =  "EXCHANGE_PRN";
+	public static String QUEUE_NAME =  "queue/QUEUE_PRN";
+	
+	protected QueueSender sender_out;
+
 	
 	
 	public ProcessReservationNode() throws Exception {
@@ -21,17 +23,13 @@ public class ProcessReservationNode extends BasicAbstractNode {
 	}
 
 	@Override
-	protected void init() throws IOException {
-		channel.exchangeDeclare(TravelInfoNode.EXCHANGE_NAME, "fanout");
-
-		String queueName = channel.queueDeclare().getQueue();
+	protected void init() throws Exception {
+		Queue queue_in = (Queue) initialContext.lookup(TravelInfoNode.QUEUE_NAME_PRN);
+		Queue queue_out = (Queue) initialContext.lookup(QUEUE_NAME);
 		
-		channel.queueBind(queueName, TravelInfoNode.EXCHANGE_NAME, "");
-
-		consumer = new QueueingConsumer(channel);
-        channel.basicConsume(queueName, true, consumer);
-
-        channel.exchangeDeclare(EXCHANGE_NAME, "fanout");
+		receiver = session.createReceiver(queue_in);
+		
+		sender_out = session.createSender(queue_out);
 	}
 
 	@Override
@@ -43,18 +41,18 @@ public class ProcessReservationNode extends BasicAbstractNode {
 	}
 	
 	@Override
-	public void next() throws IOException {
+	public void next() throws Exception {
 		gui.disable();
 		
-		BasicProperties props = null;
-		if (lastMessage.getProperties() != null && lastMessage.getProperties().getCorrelationId() != null) {
-			props = new BasicProperties()
-					.builder()
-					.correlationId(lastMessage.getProperties().getCorrelationId())
-					.build();
+		BytesMessage message = session.createBytesMessage();
+
+		if (lastMessage.getStringProperty(JoinAbstractNode.KEY_CORRELATION_ID) != null) {
+			message.setStringProperty(JoinAbstractNode.KEY_CORRELATION_ID, lastMessage.getStringProperty(JoinAbstractNode.KEY_CORRELATION_ID));
 		}
-		
-		channel.basicPublish(EXCHANGE_NAME, "", props, Serializer.serialize(travelInfo));
+
+		message.writeBytes(Serializer.serialize(travelInfo));
+
+		sender_out.send(message);
 		
 		synchronized (lock) {
 			lock.notify();		

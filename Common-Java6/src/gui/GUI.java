@@ -6,7 +6,6 @@ import java.awt.EventQueue;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -160,7 +159,8 @@ public class GUI {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					node.next();
-				} catch (IOException e1) {
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
