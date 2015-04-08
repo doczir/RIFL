@@ -2,6 +2,7 @@ package actors;
 
 import gui.GUI;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -13,6 +14,8 @@ import util.NodeBehavior;
 import actors.BillingInfoNode.BillingInfoNodeDone;
 import actors.ProcessReservationNode.ProcessReservationNodeDone;
 import akka.actor.Props;
+import akka.japi.Creator;
+import akka.japi.pf.FI.UnitApply;
 import akka.japi.pf.ReceiveBuilder;
 
 public class PaymentInfoNode extends AbstractNode {
@@ -24,7 +27,7 @@ public class PaymentInfoNode extends AbstractNode {
 	private Queue<ProcessReservationNodeDone> prnd;
 
 	private Queue<BillingInfoNodeDone> bind;
-	
+
 	public PaymentInfoNode() {
 		super();
 		new GUI("PaymentInfoNode", this);
@@ -33,11 +36,10 @@ public class PaymentInfoNode extends AbstractNode {
 	@Override
 	public void next() {
 		gui.disable();
-		// channel.broadcast(new PaymentInfoNodeDone(billingInfo));
 		super.next();
 	}
 
-	public static class PaymentInfoNodeDone {
+	public static class PaymentInfoNodeDone  implements Serializable {
 		private BillingInfo billingInfo;
 
 		public PaymentInfoNodeDone(BillingInfo billingInfo) {
@@ -57,31 +59,39 @@ public class PaymentInfoNode extends AbstractNode {
 
 		receive(ReceiveBuilder
 				.match(ProcessReservationNodeDone.class,
-						msg -> {
-							try {
-								prnd.add(msg);
+						new UnitApply<ProcessReservationNodeDone>() {
+							@Override
+							public void apply(ProcessReservationNodeDone msg)
+									throws Exception {
+								try {
+									prnd.add(msg);
 
-								joinIncomingMessages();
-							} catch (Exception e) {
-								Logger.getLogger(
-										PaymentInfoNode.this.getClass()
-												.getSimpleName()).severe(
-										"An exception occured: "
-												+ e.getMessage());
+									joinIncomingMessages();
+								} catch (Exception e) {
+									Logger.getLogger(
+											PaymentInfoNode.this.getClass()
+													.getSimpleName()).severe(
+											"An exception occured: "
+													+ e.getMessage());
+								}
 							}
 						})
 				.match(BillingInfoNodeDone.class,
-						msg -> {
-							try {
-								bind.add(msg);
+						new UnitApply<BillingInfoNodeDone>() {
+							@Override
+							public void apply(BillingInfoNodeDone msg)
+									throws Exception {
+								try {
+									bind.add(msg);
 
-								joinIncomingMessages();
-							} catch (Exception e) {
-								Logger.getLogger(
-										PaymentInfoNode.this.getClass()
-												.getSimpleName()).severe(
-										"An exception occured: "
-												+ e.getMessage());
+									joinIncomingMessages();
+								} catch (Exception e) {
+									Logger.getLogger(
+											PaymentInfoNode.this.getClass()
+													.getSimpleName()).severe(
+											"An exception occured: "
+													+ e.getMessage());
+								}
 							}
 						}).build());
 	}
@@ -118,8 +128,15 @@ public class PaymentInfoNode extends AbstractNode {
 					.severe("An exception occured: " + e.getMessage());
 		}
 	}
-	
+
 	public static Props props() {
-		return Props.create(PaymentInfoNode.class, PaymentInfoNode::new);
+		return Props.create(PaymentInfoNode.class,
+				new Creator<PaymentInfoNode>() {
+
+					@Override
+					public PaymentInfoNode create() throws Exception {
+						return new PaymentInfoNode();
+					}
+				});
 	}
 }

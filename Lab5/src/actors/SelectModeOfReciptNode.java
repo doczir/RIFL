@@ -5,6 +5,7 @@ import gui.SMORGUI;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Serializable;
 
 import javax.swing.JButton;
 
@@ -12,6 +13,7 @@ import model.BillingInfo;
 import util.MessageHelper;
 import actors.PaymentInfoNode.PaymentInfoNodeDone;
 import akka.actor.Props;
+import akka.japi.Creator;
 
 public class SelectModeOfReciptNode extends AbstractNode {
 
@@ -93,7 +95,7 @@ public class SelectModeOfReciptNode extends AbstractNode {
 		}
 	}
 
-	public static class SelectModeOfReciptDone {
+	public static class SelectModeOfReciptDone  implements Serializable {
 		private boolean isDelivery;
 		private BillingInfo billingInfo;
 
@@ -114,6 +116,12 @@ public class SelectModeOfReciptNode extends AbstractNode {
 	}
 	
 	public static Props props() {
-		return Props.create(SelectModeOfReciptNode.class, SelectModeOfReciptNode::new);
+		return Props.create(SelectModeOfReciptNode.class, new Creator<SelectModeOfReciptNode>() {
+
+			@Override
+			public SelectModeOfReciptNode create() throws Exception {
+				return new SelectModeOfReciptNode();
+			}
+		});
 	}
 }

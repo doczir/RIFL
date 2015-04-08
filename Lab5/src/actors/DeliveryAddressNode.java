@@ -1,10 +1,13 @@
 package actors;
 
+import java.io.Serializable;
+
 import gui.GUI;
 import model.BillingInfo;
 import util.NodeBehavior;
 import actors.SelectModeOfReciptNode.SelectModeOfReciptDone;
 import akka.actor.Props;
+import akka.japi.Creator;
 
 public class DeliveryAddressNode extends AbstractNode {
 
@@ -34,7 +37,7 @@ public class DeliveryAddressNode extends AbstractNode {
 		super.next();
 	}
 
-	public static class DeliveryAddressDone {
+	public static class DeliveryAddressDone  implements Serializable {
 
 		private BillingInfo billingInfo;
 
@@ -49,6 +52,12 @@ public class DeliveryAddressNode extends AbstractNode {
 	}
 	
 	public static Props props() {
-		return Props.create(DeliveryAddressNode.class, DeliveryAddressNode::new);
+		return Props.create(DeliveryAddressNode.class,new Creator<DeliveryAddressNode>() {
+
+			@Override
+			public DeliveryAddressNode create() throws Exception {
+				return new DeliveryAddressNode();
+			}
+		});
 	}
 }

@@ -1,5 +1,7 @@
 package actors;
 
+import java.io.Serializable;
+
 import gui.GUI;
 import akka.actor.Props;
 import akka.japi.Creator;
@@ -35,7 +37,7 @@ public class BillingInfoNode extends AbstractNode {
 		super.next();
 	}
 
-	public static class BillingInfoNodeDone {
+	public static class BillingInfoNodeDone implements Serializable {
 		private BillingInfo billingInfo;
 
 		public BillingInfoNodeDone(BillingInfo billingInfo) {
@@ -49,6 +51,12 @@ public class BillingInfoNode extends AbstractNode {
 	}
 
 	public static Props props() {
-		return Props.create(BillingInfoNode.class, BillingInfoNode::new);
+		return Props.create(BillingInfoNode.class, new Creator<BillingInfoNode>() {
+
+			@Override
+			public BillingInfoNode create() throws Exception {
+				return new BillingInfoNode();
+			}
+		});
 	}
 }

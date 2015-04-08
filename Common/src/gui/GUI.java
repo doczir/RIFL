@@ -158,11 +158,7 @@ public class GUI {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				try {
-					node.next();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
+				node.next();
 			}
 		});
 	}

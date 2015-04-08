@@ -8,6 +8,7 @@ import java.util.Queue;
 
 import node.Node;
 import akka.actor.AbstractActor;
+import akka.japi.pf.FI.UnitApply;
 import akka.japi.pf.ReceiveBuilder;
 
 public abstract class AbstractNode extends AbstractActor implements Node {
@@ -47,8 +48,11 @@ public abstract class AbstractNode extends AbstractActor implements Node {
 	}
 
 	protected void init() {
-		receive(ReceiveBuilder.matchAny(o -> {
-			onMessageReceived(o);
+		receive(ReceiveBuilder.matchAny(new UnitApply<Object>() {
+			@Override
+			public void apply(Object o) throws Exception {
+				onMessageReceived(o);
+			}
 		}).build());
 	}
 

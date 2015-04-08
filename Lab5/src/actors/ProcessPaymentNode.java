@@ -1,10 +1,13 @@
 package actors;
 
+import java.io.Serializable;
+
 import gui.GUI;
 import model.BillingInfo;
 import util.NodeBehavior;
 import actors.PaymentInfoNode.PaymentInfoNodeDone;
 import akka.actor.Props;
+import akka.japi.Creator;
 
 public class ProcessPaymentNode extends AbstractNode {
 
@@ -31,7 +34,7 @@ public class ProcessPaymentNode extends AbstractNode {
 		super.next();
 	}
 
-	public static class ProcessPaymentNodeDone {
+	public static class ProcessPaymentNodeDone  implements Serializable {
 		private BillingInfo billingInfo;
 
 		public ProcessPaymentNodeDone(BillingInfo billingInfo) {
@@ -45,6 +48,12 @@ public class ProcessPaymentNode extends AbstractNode {
 	}
 
 	public static Props props() {
-		return Props.create(ProcessPaymentNode.class, ProcessPaymentNode::new);
+		return Props.create(ProcessPaymentNode.class, new Creator<ProcessPaymentNode>() {
+
+			@Override
+			public ProcessPaymentNode create() throws Exception {
+				return new ProcessPaymentNode();
+			}
+		});
 	}
 }

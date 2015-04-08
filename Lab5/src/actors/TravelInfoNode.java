@@ -1,10 +1,13 @@
 package actors;
 
+import java.io.Serializable;
+
 import gui.GUI;
 import model.TravelInfo;
 import util.MessageHelper;
 import util.NodeBehavior;
 import akka.actor.Props;
+import akka.japi.Creator;
 
 public class TravelInfoNode extends AbstractNode {
 
@@ -36,10 +39,10 @@ public class TravelInfoNode extends AbstractNode {
 		super.next();
 	}
 
-	public static class Start {
+	public static class Start implements Serializable  {
 	}
 
-	public static class TravelInfoNodeDone {
+	public static class TravelInfoNodeDone implements Serializable {
 		private TravelInfo travelInfo;
 
 		public TravelInfoNodeDone(TravelInfo travelInfo) {
@@ -53,7 +56,14 @@ public class TravelInfoNode extends AbstractNode {
 	}
 
 	public static Props props() {
-		return Props.create(TravelInfoNode.class, TravelInfoNode::new);
+		return Props.create(TravelInfoNode.class,
+				new Creator<TravelInfoNode>() {
+
+					@Override
+					public TravelInfoNode create() throws Exception {
+						return new TravelInfoNode();
+					}
+				});
 	}
 
 }

@@ -1,10 +1,10 @@
 package nodes;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import gui.GUI;
 import gui.SMORGUI;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 

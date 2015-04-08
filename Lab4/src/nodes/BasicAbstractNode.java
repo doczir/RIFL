@@ -14,7 +14,7 @@ public abstract class BasicAbstractNode extends AbstractNode {
 
 	public BasicAbstractNode() throws Exception {
 		super();
-
+		
 		if (receiver == null) {
 			throw new Exception("A BasicAbstractNode must have a consumer!");
 		}
