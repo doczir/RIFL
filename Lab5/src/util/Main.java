@@ -1,5 +1,6 @@
 package util;
 
+import scala.Console;
 import actors.BillingInfoNode;
 import actors.DeliveryAddressNode;
 import actors.PaymentInfoNode;
@@ -20,72 +21,78 @@ import com.typesafe.config.ConfigFactory;
 public class Main {
 
 	public static String CHANNEL_ADDRESS;
+	public static String IP_ADDRESS_0 = "127.0.0.1";
+	public static String IP_ADDRESS_1 = "127.0.0.1";
+	public static int DEFAULT_PORT_0 = 5061;
+	public static int DEFAULT_PORT_1 = 5062;
+	public static String SYSTEM_0 = "SYSTEM_0";
+	public static String SYSTEM_1 = "SYSTEM_1";
 
+	
 	public static void main(String[] args) throws Exception {
 		if (args.length == 0) {
 			return;
 		}
 
-		Config config = ConfigFactory
-				.parseString(
-						"akka.actor.provider = \"akka.remote.RemoteActorRefProvider\" \n"
-								+ "akka.remote.enabled-transports = [\"akka.remote.netty.tcp\"] \n"
-								+ "akka.remote.netty.hostname = \"192.168.69.128\""
-								+ "\n" + "akka.remote.netty.tcp.port=" + (5061 + Integer.parseInt(args[0])))
-				.withFallback(ConfigFactory.load());
 
-		ActorSystem system = ActorSystem.create("WorkflowCluster", config);
 
 		ActorRef start = null;
 
-		if (args[0].equals("1")) {
-			system.actorOf(BillingInfoNode.props().withDeploy(
-					new Deploy(new RemoteScope(new Address("akka.tcp",
-							"WorkflowCluster", "192.168.69.128", 5062)))), "bin");
-			start = system.actorOf(TravelInfoNode.props().withDeploy(
-					new Deploy(new RemoteScope(new Address("akka.tcp",
-							"WorkflowCluster", "192.168.69.128", 5062)))), "tin");
-			system.actorOf(ProcessReservationNode.props().withDeploy(
-					new Deploy(new RemoteScope(new Address("akka.tcp",
-							"WorkflowCluster", "192.168.69.128", 5062)))), "prn");
-			ActorRef actorOf = system.actorOf(
-					PaymentInfoNode.props().withDeploy(
-							new Deploy(new RemoteScope(new Address("akka.tcp",
-									"WorkflowCluster", "192.168.69.128", 5061)))),
-					"pin");
-			system.actorOf(
-					SelectModeOfReciptNode.props().withDeploy(
-							new Deploy(new RemoteScope(new Address("akka.tcp",
-									"WorkflowCluster", "192.168.69.128", 5061)))),
-					"smorn");
-			system.actorOf(
-					DeliveryAddressNode.props().withDeploy(
-							new Deploy(new RemoteScope(new Address("akka.tcp",
-									"WorkflowCluster", "192.168.69.128", 5061)))),
-					"dan");
-			system.actorOf(
-					ProcessPaymentNode.props().withDeploy(
-							new Deploy(new RemoteScope(new Address("akka.tcp",
-									"WorkflowCluster", "192.168.69.128", 5061)))),
-					"ppn");
+		if (args[0].equals("0")) {
+			Config config = ConfigFactory
+					.parseString(
+							"akka.actor.provider = \"akka.remote.RemoteActorRefProvider\","
+									+ "akka.remote.transport = \"akka.remote.netty.NettyRemoteTransport\","
+									+ "akka.remote.netty.tcp.hostname = \"" + IP_ADDRESS_0 + "\","
+									+ "akka.remote.netty.tcp.port=" + DEFAULT_PORT_0)
+					.withFallback(ConfigFactory.load());
+
+			ActorSystem system = ActorSystem.create(SYSTEM_0, config);
+
+			System.out.println("Press return...");
+			Console.readLine();
+
+			start = system.actorOf(TravelInfoNode.props(), "tin");
+			system.actorOf(BillingInfoNode.props(), "bin");
+			system.actorOf(ProcessReservationNode.props(), "prn");
+
+			if (start != null)
+				start.tell(new Start(), null);
+
+		} else if (args[0].equals("1")) {
+			Config config = ConfigFactory
+					.parseString(
+							"akka.actor.provider = \"akka.remote.RemoteActorRefProvider\" \n"
+									+ "akka.remote.transport = \"akka.remote.netty.NettyRemoteTransport\" \n"
+									+ "akka.remote.netty.tcp.hostname = \"" + IP_ADDRESS_1 + "\" \n"
+									+ "akka.remote.netty.tcp.port=" + DEFAULT_PORT_1)
+					.withFallback(ConfigFactory.load());
+
+			ActorSystem system = ActorSystem.create(SYSTEM_1, config);
+			
+			System.out.println("Press return...");
+			Console.readLine();
+			
+			system.actorOf(PaymentInfoNode.props(), "pin");
+			system.actorOf(SelectModeOfReciptNode.props(), "smorn");
+			system.actorOf(DeliveryAddressNode.props(), "dan");
+			system.actorOf(ProcessPaymentNode.props(), "ppn");
 		}
-
+		
 		MessageHelper.map(BillingInfoNode.class,
-				"akka.tcp://WorkflowCluster@192.168.69.128:5062/user/bin");
+				"akka.tcp://"+SYSTEM_0+"@"+IP_ADDRESS_0+":"+DEFAULT_PORT_0+"/user/bin");
 		MessageHelper.map(TravelInfoNode.class,
-				"akka.tcp://WorkflowCluster@192.168.69.128:5062/user/tin");
+				"akka.tcp://"+SYSTEM_0+"@"+IP_ADDRESS_0+":"+DEFAULT_PORT_0+"/user/tin");
 		MessageHelper.map(ProcessReservationNode.class,
-				"akka.tcp://WorkflowCluster@192.168.69.128:5062/user/prn");
+				"akka.tcp://"+SYSTEM_0+"@"+IP_ADDRESS_0+":"+DEFAULT_PORT_0+"/user/prn");
 		MessageHelper.map(PaymentInfoNode.class,
-				"akka.tcp://WorkflowCluster@192.168.69.128:5061/user/pin");
+				"akka.tcp://"+SYSTEM_1+"@"+IP_ADDRESS_1+":"+DEFAULT_PORT_1+"/user/pin");
 		MessageHelper.map(SelectModeOfReciptNode.class,
-				"akka.tcp://WorkflowCluster@192.168.69.128:5061/user/smorn");
+				"akka.tcp://"+SYSTEM_1+"@"+IP_ADDRESS_1+":"+DEFAULT_PORT_1+"/user/smorn");
 		MessageHelper.map(DeliveryAddressNode.class,
-				"akka.tcp://WorkflowCluster@192.168.69.128:5061/user/dan");
+				"akka.tcp://"+SYSTEM_1+"@"+IP_ADDRESS_1+":"+DEFAULT_PORT_1+"/user/dan");
 		MessageHelper.map(ProcessPaymentNode.class,
-				"akka.tcp://WorkflowCluster@192.168.69.128:5061/user/ppn");
-
-		if (start != null)
-			start.tell(new Start(), null);
+				"akka.tcp://"+SYSTEM_1+"@"+IP_ADDRESS_1+":"+DEFAULT_PORT_1+"/user/ppn");
+		
 	}
 }

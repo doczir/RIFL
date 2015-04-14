@@ -28,7 +28,7 @@ public abstract class AbstractNode extends AbstractActor implements Node {
 		this.gui = gui;
 	}
 
-	protected void onMessageReceived(Object msg) {
+	protected synchronized void onMessageReceived(Object msg) {
 		if (!queue.isEmpty() || processing)
 			queue.add(msg);
 		else
@@ -40,11 +40,18 @@ public abstract class AbstractNode extends AbstractActor implements Node {
 	}
 
 	protected Object nextMessage() {
+		Object result = null;
+		
 		if (queue.isEmpty())
-			return null;
+			result = null;
 		else
-			return queue.poll();
-
+			result = queue.poll();
+		
+		if (gui != null) {
+			gui.setQueueSize(queue.size());
+		}
+		
+		return result;
 	}
 
 	protected void init() {
@@ -64,7 +71,7 @@ public abstract class AbstractNode extends AbstractActor implements Node {
 	}
 
 	@Override
-	public void next() {
+	public synchronized void next() {
 		processing = false;
 		processMessage(nextMessage());
 	}

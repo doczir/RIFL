@@ -10,9 +10,11 @@ import java.util.Queue;
 import java.util.logging.Logger;
 
 import model.BillingInfo;
+import util.MessageHelper;
 import util.NodeBehavior;
 import actors.BillingInfoNode.BillingInfoNodeDone;
 import actors.ProcessReservationNode.ProcessReservationNodeDone;
+import actors.TravelInfoNode.TravelInfoNodeDone;
 import akka.actor.Props;
 import akka.japi.Creator;
 import akka.japi.pf.FI.UnitApply;
@@ -36,6 +38,12 @@ public class PaymentInfoNode extends AbstractNode {
 	@Override
 	public void next() {
 		gui.disable();
+		getContext().actorSelection(
+				MessageHelper.getActorAddress(SelectModeOfReciptNode.class)).tell(
+				new PaymentInfoNodeDone(billingInfo), self());
+		getContext().actorSelection(
+				MessageHelper.getActorAddress(ProcessPaymentNode.class))
+				.tell(new PaymentInfoNodeDone(billingInfo), self());		
 		super.next();
 	}
 

@@ -20,14 +20,14 @@ public class TravelInfoNode extends AbstractNode {
 
 	@Override
 	protected void internalProcessMessage(Object message) {
-		gui.enable();
 		travelInfo = new TravelInfo();
 		NodeBehavior.travelInfoBehavior(travelInfo);
 		gui.notify(travelInfo, null);
+		gui.enable();
 	}
 
 	@Override
-	public void next() {
+	public synchronized void next() {
 		gui.disable();
 		getContext().actorSelection(
 				MessageHelper.getActorAddress(BillingInfoNode.class)).tell(
@@ -35,8 +35,8 @@ public class TravelInfoNode extends AbstractNode {
 		getContext().actorSelection(
 				MessageHelper.getActorAddress(ProcessReservationNode.class))
 				.tell(new TravelInfoNodeDone(travelInfo), self());
-		self().tell(new Start(), self());
 		super.next();
+		self().tell(new Start(), self());
 	}
 
 	public static class Start implements Serializable  {
