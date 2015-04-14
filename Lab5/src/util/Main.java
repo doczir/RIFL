@@ -49,9 +49,6 @@ public class Main {
 
 			ActorSystem system = ActorSystem.create(SYSTEM_0, config);
 
-			System.out.println("Press return...");
-			Console.readLine();
-
 			start = system.actorOf(TravelInfoNode.props(), "tin");
 			system.actorOf(BillingInfoNode.props(), "bin");
 			system.actorOf(ProcessReservationNode.props(), "prn");
@@ -69,9 +66,6 @@ public class Main {
 					.withFallback(ConfigFactory.load());
 
 			ActorSystem system = ActorSystem.create(SYSTEM_1, config);
-			
-			System.out.println("Press return...");
-			Console.readLine();
 			
 			system.actorOf(PaymentInfoNode.props(), "pin");
 			system.actorOf(SelectModeOfReciptNode.props(), "smorn");
