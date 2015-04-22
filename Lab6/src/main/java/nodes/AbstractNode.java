@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import node.Node;
 import util.DroolsManager;
 import util.Message;
+import channel.BaseMessage;
 import channel.Channel;
 
 
@@ -38,7 +39,7 @@ public abstract class AbstractNode implements Node {
 				try {
 					Object nextMessage = nextMessage();
 					
-					DroolsManager.getInstance().insert(new Message(AbstractNode.this.getClass(), Message.TYPE_PROCESSING_START, System.nanoTime()));
+					DroolsManager.getInstance().insert(new Message(getId(nextMessage), AbstractNode.this.getClass(), Message.TYPE_PROCESSING_START, System.nanoTime()));
 					
 					if (automatic) {
 						Thread.sleep(delay.getAsInt());
@@ -103,7 +104,11 @@ public abstract class AbstractNode implements Node {
 
 	@Override
 	public void next() {
-		DroolsManager.getInstance().insert(new Message(AbstractNode.this.getClass(), Message.TYPE_PROCESSING_END, System.nanoTime()));
+		DroolsManager.getInstance().insert(new Message(id, AbstractNode.this.getClass(), Message.TYPE_PROCESSING_END, System.nanoTime()));
+	}
+	
+	protected int getId(Object message) {
+		return ((BaseMessage)message).getId();
 	}
 
 	protected abstract void init();

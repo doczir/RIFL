@@ -1,6 +1,8 @@
 //created on: 2015.04.22.
 package rules
 
+import util.Message;
+import nodes.*;
 //list any import classes here.
 
 
@@ -10,20 +12,17 @@ package rules
 
 
 
-rule "Your First Rule"
+rule "Rule 1 : JOIN"
 
     when
-        //conditions
+    	$endBIN : Message ($senderBIN: sender, type == Message.TYPE_PROCESSING_END, $tsBIN : timestamp, $idBIN : id)
+    		eval ($senderBIN == BillingInfoNode.class)
+
+    	$endPRN : Message ($senderPRN: sender, type == Message.TYPE_PROCESSING_END, $tsPRN : timestamp, $idPRN : id)
+    		eval ($senderPRN == ProcessReservationNode.class)
+    	
+    	eval ($idBIN == $idPRN)
+    	eval (Math.abs($tsBIN - $tsPRN) > 5000)
     then
-        //actions
-
-end
-
-rule "Your Second Rule"
-    //include attributes such as "salience" here...
-    when
-        //conditions
-    then
-        //actions
-
+		System.out.println("Slow join!!!!");
 end

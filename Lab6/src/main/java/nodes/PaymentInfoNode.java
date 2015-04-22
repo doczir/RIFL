@@ -110,4 +110,11 @@ public class PaymentInfoNode extends AbstractNode {
 			Logger.getLogger(PaymentInfoNode.this.getClass().getSimpleName()).severe("An exception occured: " + e.getMessage());
 		}
 	}
+	
+	@Override
+	protected int getId(Object message) {
+		HashMap<Integer, BaseMessage> msg = (HashMap<Integer, BaseMessage>)message;
+		
+		return (msg.get(KEY_BILLING_INFO_NODE_DONE)).getId();
+	}
 }

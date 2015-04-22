@@ -5,6 +5,7 @@ public class Message {
 	public static final int TYPE_PROCESSING_START = 0;
 	public static final int TYPE_PROCESSING_END = 1;
 	
+	private int id;
 	private Class<?> sender;
 	
 	private int type;
@@ -14,11 +15,20 @@ public class Message {
 	
 	public Message() {}
 
-	public Message(Class<?> sender, int type, long timestamp) {
+	public Message(int id, Class<?> sender, int type, long timestamp) {
 		super();
+		this.id = id;
 		this.sender = sender;
 		this.type = type;
 		this.timestamp = (long) ((timestamp - DroolsManager.epoch) / 1000000.0);
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public Class<?> getSender() {
