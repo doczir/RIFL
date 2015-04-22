@@ -17,8 +17,19 @@ public class DroolsManager extends Thread {
 	
 	private boolean running = true;
 	
+	private static DroolsManager instance = null;
+	
+	
+	public static synchronized DroolsManager getInstance() {
+		if (instance == null) {
+			instance = new DroolsManager();
+		}
+		
+		return instance;
+	}
+	
 
-	public DroolsManager() {
+	private DroolsManager() {
 		queue = new LinkedBlockingQueue<Message>();
 		
 		running = true;
