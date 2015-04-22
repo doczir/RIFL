@@ -5,6 +5,7 @@ import gui.SMORGUI;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.function.IntSupplier;
 
 import javax.swing.JButton;
 
@@ -19,8 +20,8 @@ public class SelectModeOfReciptNode extends AbstractNode {
 	private BillingInfo billingInfo;
 
 	
-	public SelectModeOfReciptNode(Channel channel) {
-		super(channel);
+	public SelectModeOfReciptNode(Channel channel, boolean automatic, IntSupplier delay) {
+		super(channel, automatic, delay);
 	}
 
 	@Override
@@ -31,7 +32,9 @@ public class SelectModeOfReciptNode extends AbstractNode {
 	}
 
 	@Override
-	protected void processMessage(Object message) {
+	protected void processMessage(Object message) throws InterruptedException {
+		if(automatic) 
+			Thread.sleep(delay.getAsInt());
 		PaymentInfoNodeDone msg = (PaymentInfoNodeDone) message;
 		id = msg.getId();
 		gui.enable();
@@ -39,6 +42,8 @@ public class SelectModeOfReciptNode extends AbstractNode {
 		billingInfo = msg.getBillingInfo();
 
 		gui.notify(null, billingInfo);
+		if(automatic) 
+			next();
 	}
 	
 	@Override

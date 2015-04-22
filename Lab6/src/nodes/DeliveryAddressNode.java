@@ -1,5 +1,7 @@
 package nodes;
 
+import java.util.function.IntSupplier;
+
 import model.BillingInfo;
 import nodes.SelectModeOfReciptNode.SelectModeOfReciptDone;
 import util.NodeBehavior;
@@ -10,8 +12,8 @@ public class DeliveryAddressNode extends AbstractNode {
 
 	private BillingInfo billingInfo;
 
-	public DeliveryAddressNode(Channel channel) {
-		super(channel);
+	public DeliveryAddressNode(Channel channel, boolean automatic, IntSupplier delay) {
+		super(channel, automatic, delay);
 	}
 
 	@Override
@@ -24,7 +26,9 @@ public class DeliveryAddressNode extends AbstractNode {
 	}
 
 	@Override
-	protected void processMessage(Object message) {
+	protected void processMessage(Object message) throws InterruptedException {
+		if(automatic) 
+			Thread.sleep(delay.getAsInt());
 		SelectModeOfReciptDone msg = (SelectModeOfReciptDone) message;
 		id = msg.getId();
 		gui.enable();
@@ -34,6 +38,8 @@ public class DeliveryAddressNode extends AbstractNode {
 		NodeBehavior.deliveryAddressBehavior(billingInfo);
 
 		gui.notify(null, billingInfo);
+		if(automatic) 
+			next();
 	}
 
 	@Override

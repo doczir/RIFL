@@ -1,5 +1,7 @@
 package nodes;
 
+import java.util.function.IntSupplier;
+
 import model.TravelInfo;
 import util.NodeBehavior;
 import channel.BaseMessage;
@@ -10,8 +12,8 @@ public class TravelInfoNode extends AbstractNode {
 	private static int i = 0;
 	private TravelInfo travelInfo;
 
-	public TravelInfoNode(Channel channel) {
-		super(channel);
+	public TravelInfoNode(Channel channel, boolean automatic, IntSupplier delay) {
+		super(channel, automatic, delay);
 	}
 
 	@Override
@@ -22,12 +24,16 @@ public class TravelInfoNode extends AbstractNode {
 	}
 
 	@Override
-	protected void processMessage(Object message) {
+	protected void processMessage(Object message) throws InterruptedException {
+		if(automatic) 
+			Thread.sleep(delay.getAsInt());
 		gui.enable();
 		id = ((Start) message).getId();
 		travelInfo = new TravelInfo();
 		NodeBehavior.travelInfoBehavior(travelInfo);
 		gui.notify(travelInfo, null);
+		if(automatic) 
+			next();
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import gui.GUI;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.function.IntSupplier;
 import java.util.logging.Logger;
 
 import node.Node;
@@ -17,9 +18,13 @@ public abstract class AbstractNode implements Node {
 	protected Object lock;
 	
 	protected int id;
+	protected boolean automatic;
+	protected IntSupplier delay;
 
-	public AbstractNode(Channel channel) {
+	public AbstractNode(Channel channel, boolean automatic, IntSupplier delay) {
 		this.channel = channel;
+		this.automatic = automatic;
+		this.delay = delay;
 		this.queue = new ArrayBlockingQueue<Object>(10);
 		lock = new Object();
 		
@@ -27,7 +32,11 @@ public abstract class AbstractNode implements Node {
 		
 		new Thread(() -> {
 			while (true) {
-				processMessage(nextMessage());
+				try {
+					processMessage(nextMessage());
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
 				
 				synchronized (lock) {
 					try {
@@ -75,5 +84,5 @@ public abstract class AbstractNode implements Node {
 	
 	protected abstract void init();
 	
-	protected abstract void processMessage(Object message);
+	protected abstract void processMessage(Object message) throws InterruptedException;
 }

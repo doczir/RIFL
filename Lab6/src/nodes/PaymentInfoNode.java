@@ -3,6 +3,7 @@ package nodes;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.function.IntSupplier;
 import java.util.logging.Logger;
 
 import model.BillingInfo;
@@ -23,8 +24,8 @@ public class PaymentInfoNode extends AbstractNode {
 	private ArrayBlockingQueue<BillingInfoNodeDone> bind;
 	
 	
-	public PaymentInfoNode(Channel channel) {
-		super(channel);
+	public PaymentInfoNode(Channel channel, boolean automatic, IntSupplier delay) {
+		super(channel, automatic, delay);
 	}
 
 	@Override
@@ -88,7 +89,9 @@ public class PaymentInfoNode extends AbstractNode {
 	}
 	
 	@Override
-	protected void processMessage(Object message) {
+	protected void processMessage(Object message) throws InterruptedException {
+		if(automatic) 
+			Thread.sleep(delay.getAsInt());
 		ProcessReservationNodeDone prndm = null;
 		BillingInfoNodeDone bindm = null;
 		
@@ -106,5 +109,7 @@ public class PaymentInfoNode extends AbstractNode {
 		} catch (Exception e) {
 			Logger.getLogger(PaymentInfoNode.this.getClass().getSimpleName()).severe("An exception occured: " + e.getMessage());
 		}
+		if(automatic) 
+			next();
 	}
 }

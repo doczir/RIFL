@@ -1,5 +1,7 @@
 package nodes;
 
+import java.util.function.IntSupplier;
+
 import model.TravelInfo;
 import nodes.TravelInfoNode.TravelInfoNodeDone;
 import util.NodeBehavior;
@@ -11,8 +13,8 @@ public class ProcessReservationNode extends AbstractNode {
 	private TravelInfo travelInfo;
 
 	
-	public ProcessReservationNode(Channel channel) {
-		super(channel);
+	public ProcessReservationNode(Channel channel, boolean automatic, IntSupplier delay) {
+		super(channel, automatic, delay);
 	}
 
 	@Override
@@ -23,13 +25,17 @@ public class ProcessReservationNode extends AbstractNode {
 	}
 
 	@Override
-	protected void processMessage(Object message) {
+	protected void processMessage(Object message) throws InterruptedException {
+		if(automatic) 
+			Thread.sleep(delay.getAsInt());
 		TravelInfoNodeDone msg = (TravelInfoNodeDone) message;
 		id = msg.getId();
 		gui.enable();
 		travelInfo = msg.getTravelInfo();
 		NodeBehavior.processReservationBehavior(travelInfo);
 		gui.notify(travelInfo, null);
+		if(automatic) 
+			next();
 	}
 	
 	@Override

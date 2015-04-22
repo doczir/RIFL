@@ -1,5 +1,7 @@
 package nodes;
 
+import java.util.function.IntSupplier;
+
 import model.BillingInfo;
 import nodes.PaymentInfoNode.PaymentInfoNodeDone;
 import util.NodeBehavior;
@@ -11,8 +13,8 @@ public class ProcessPaymentNode extends AbstractNode {
 	private BillingInfo billingInfo;
 
 	
-	public ProcessPaymentNode(Channel channel) {
-		super(channel);
+	public ProcessPaymentNode(Channel channel, boolean automatic, IntSupplier delay) {
+		super(channel, automatic, delay);
 	}
 	
 	@Override
@@ -23,13 +25,17 @@ public class ProcessPaymentNode extends AbstractNode {
 	}
 
 	@Override
-	protected void processMessage(Object message) {
+	protected void processMessage(Object message) throws InterruptedException {
+		if(automatic) 
+			Thread.sleep(delay.getAsInt());
 		PaymentInfoNodeDone msg = (PaymentInfoNodeDone) message;
 		id = msg.getId();
 		gui.enable();
 		billingInfo = msg.getBillingInfo();
 		NodeBehavior.processPaymentBehavior(billingInfo);
 		gui.notify(null, billingInfo);
+		if(automatic) 
+			next();
 	}	
 
 	@Override
