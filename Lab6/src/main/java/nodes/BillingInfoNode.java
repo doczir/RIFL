@@ -24,13 +24,17 @@ public class BillingInfoNode extends AbstractNode {
 	}
 
 	@Override
-	protected void processMessage(Object message) {
+	protected void processMessage(Object message) throws InterruptedException {
+		if(automatic) 
+			Thread.sleep(delay.getAsInt());
 		gui.enable();
 		id = ((BaseMessage) message).getId();
 		billingInfo = new BillingInfo();
 		NodeBehavior.billingInfoBehavior(billingInfo);
 
 		gui.notify(null, billingInfo);
+		if(automatic) 
+			next();
 	}
 
 	@Override
