@@ -19,13 +19,13 @@ public class Main {
 		Channel channel = new Channel();
 		
 		
-		new GUI("TravelInfoNode", new TravelInfoNode(channel));
-		new GUI("ProcessReservationNode", new ProcessReservationNode(channel));
-		new GUI("BillingInfoNode", new BillingInfoNode(channel));
-		new GUI("PaymentInfoNode", new PaymentInfoNode(channel));
-		new GUI("ProcessPaymentNode", new ProcessPaymentNode(channel));
-		new SMORGUI("SelectModeOfReciptNode", new SelectModeOfReciptNode(channel));
-		new GUI("DeliveryAddress", new DeliveryAddressNode(channel));
+		new GUI("TravelInfoNode", new TravelInfoNode(channel, false, () -> 0));
+		new GUI("ProcessReservationNode", new ProcessReservationNode(channel, false, () -> 0));
+		new GUI("BillingInfoNode", new BillingInfoNode(channel, false, () -> 0));
+		new GUI("PaymentInfoNode", new PaymentInfoNode(channel, false, () -> 0));
+		new GUI("ProcessPaymentNode", new ProcessPaymentNode(channel, false, () -> 0));
+		new SMORGUI("SelectModeOfReciptNode", new SelectModeOfReciptNode(channel, false, () -> 0));
+		new GUI("DeliveryAddress", new DeliveryAddressNode(channel, false, () -> 0));
 		
 		channel.broadcast(new Start(0));
 	}
