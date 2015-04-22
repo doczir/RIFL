@@ -32,9 +32,7 @@ public class SelectModeOfReciptNode extends AbstractNode {
 	}
 
 	@Override
-	protected void processMessage(Object message) throws InterruptedException {
-		if(automatic) 
-			Thread.sleep(delay.getAsInt());
+	protected void processMessage(Object message)  {
 		PaymentInfoNodeDone msg = (PaymentInfoNodeDone) message;
 		id = msg.getId();
 		gui.enable();
@@ -42,8 +40,6 @@ public class SelectModeOfReciptNode extends AbstractNode {
 		billingInfo = msg.getBillingInfo();
 
 		gui.notify(null, billingInfo);
-		if(automatic) 
-			next();
 	}
 	
 	@Override

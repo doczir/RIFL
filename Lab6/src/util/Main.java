@@ -20,12 +20,12 @@ public class Main {
 		
 		
 		new GUI("TravelInfoNode", new TravelInfoNode(channel, false, () -> 0));
-		new GUI("ProcessReservationNode", new ProcessReservationNode(channel, false, () -> 0));
-		new GUI("BillingInfoNode", new BillingInfoNode(channel, false, () -> 0));
-		new GUI("PaymentInfoNode", new PaymentInfoNode(channel, false, () -> 0));
-		new GUI("ProcessPaymentNode", new ProcessPaymentNode(channel, false, () -> 0));
-		new SMORGUI("SelectModeOfReciptNode", new SelectModeOfReciptNode(channel, false, () -> 0));
-		new GUI("DeliveryAddress", new DeliveryAddressNode(channel, false, () -> 0));
+		new GUI("ProcessReservationNode", new ProcessReservationNode(channel, true, () -> 0));
+		new GUI("BillingInfoNode", new BillingInfoNode(channel, true, () -> 0));
+		new GUI("PaymentInfoNode", new PaymentInfoNode(channel, true, () -> 0));
+		new GUI("ProcessPaymentNode", new ProcessPaymentNode(channel, true, () -> 0));
+		new SMORGUI("SelectModeOfReciptNode", new SelectModeOfReciptNode(channel, true, () -> 0));
+		new GUI("DeliveryAddress", new DeliveryAddressNode(channel, true, () -> 0));
 		
 		channel.broadcast(new Start(0));
 	}

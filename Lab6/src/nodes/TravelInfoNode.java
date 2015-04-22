@@ -24,16 +24,12 @@ public class TravelInfoNode extends AbstractNode {
 	}
 
 	@Override
-	protected void processMessage(Object message) throws InterruptedException {
-		if(automatic) 
-			Thread.sleep(delay.getAsInt());
+	protected void processMessage(Object message)  {
 		gui.enable();
 		id = ((Start) message).getId();
 		travelInfo = new TravelInfo();
 		NodeBehavior.travelInfoBehavior(travelInfo);
 		gui.notify(travelInfo, null);
-		if(automatic) 
-			next();
 	}
 
 	@Override

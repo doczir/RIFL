@@ -12,7 +12,8 @@ public class DeliveryAddressNode extends AbstractNode {
 
 	private BillingInfo billingInfo;
 
-	public DeliveryAddressNode(Channel channel, boolean automatic, IntSupplier delay) {
+	public DeliveryAddressNode(Channel channel, boolean automatic,
+			IntSupplier delay) {
 		super(channel, automatic, delay);
 	}
 
@@ -26,9 +27,7 @@ public class DeliveryAddressNode extends AbstractNode {
 	}
 
 	@Override
-	protected void processMessage(Object message) throws InterruptedException {
-		if(automatic) 
-			Thread.sleep(delay.getAsInt());
+	protected void processMessage(Object message) {
 		SelectModeOfReciptDone msg = (SelectModeOfReciptDone) message;
 		id = msg.getId();
 		gui.enable();
@@ -38,8 +37,6 @@ public class DeliveryAddressNode extends AbstractNode {
 		NodeBehavior.deliveryAddressBehavior(billingInfo);
 
 		gui.notify(null, billingInfo);
-		if(automatic) 
-			next();
 	}
 
 	@Override
