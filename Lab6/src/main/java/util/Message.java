@@ -18,7 +18,7 @@ public class Message {
 		super();
 		this.sender = sender;
 		this.type = type;
-		this.timestamp = timestamp;
+		this.timestamp = (long) ((timestamp - DroolsManager.epoch) / 1000000.0);
 	}
 
 	public Class<?> getSender() {
@@ -44,4 +44,12 @@ public class Message {
 	public void setTimestamp(long timestamp) {
 		this.timestamp = timestamp;
 	}
+
+	@Override
+	public String toString() {
+		return "Message [sender=" + (sender == null ? "NULL" : sender.getSimpleName()) + ", type=" + type + ", timestamp="
+				+ timestamp + "]";
+	}
+	
+	
 }

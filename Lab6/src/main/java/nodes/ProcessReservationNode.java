@@ -25,21 +25,19 @@ public class ProcessReservationNode extends AbstractNode {
 	}
 
 	@Override
-	protected void processMessage(Object message) throws InterruptedException {
-		if(automatic) 
-			Thread.sleep(delay.getAsInt());
+	protected void processMessage(Object message) {
 		TravelInfoNodeDone msg = (TravelInfoNodeDone) message;
 		id = msg.getId();
 		gui.enable();
 		travelInfo = msg.getTravelInfo();
 		NodeBehavior.processReservationBehavior(travelInfo);
 		gui.notify(travelInfo, null);
-		if(automatic) 
-			next();
 	}
 	
 	@Override
 	public void next() {
+		super.next();
+		
 		gui.disable();
 		channel.broadcast(new ProcessReservationNodeDone(travelInfo, id));
 		synchronized (lock) {

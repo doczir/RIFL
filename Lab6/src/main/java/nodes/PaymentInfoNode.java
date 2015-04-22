@@ -30,6 +30,8 @@ public class PaymentInfoNode extends AbstractNode {
 
 	@Override
 	public void next() {
+		super.next();
+		
 		gui.disable();
 		channel.broadcast(new PaymentInfoNodeDone(billingInfo, id));
 		synchronized (lock) {
@@ -89,9 +91,7 @@ public class PaymentInfoNode extends AbstractNode {
 	}
 	
 	@Override
-	protected void processMessage(Object message) throws InterruptedException {
-		if(automatic) 
-			Thread.sleep(delay.getAsInt());
+	protected void processMessage(Object message) {
 		ProcessReservationNodeDone prndm = null;
 		BillingInfoNodeDone bindm = null;
 		
@@ -109,7 +109,5 @@ public class PaymentInfoNode extends AbstractNode {
 		} catch (Exception e) {
 			Logger.getLogger(PaymentInfoNode.this.getClass().getSimpleName()).severe("An exception occured: " + e.getMessage());
 		}
-		if(automatic) 
-			next();
 	}
 }

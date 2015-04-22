@@ -26,9 +26,7 @@ public class DeliveryAddressNode extends AbstractNode {
 	}
 
 	@Override
-	protected void processMessage(Object message) throws InterruptedException {
-		if(automatic) 
-			Thread.sleep(delay.getAsInt());
+	protected void processMessage(Object message) {
 		SelectModeOfReciptDone msg = (SelectModeOfReciptDone) message;
 		id = msg.getId();
 		gui.enable();
@@ -38,12 +36,12 @@ public class DeliveryAddressNode extends AbstractNode {
 		NodeBehavior.deliveryAddressBehavior(billingInfo);
 
 		gui.notify(null, billingInfo);
-		if(automatic) 
-			next();
 	}
 
 	@Override
 	public void next() {
+		super.next();
+				
 		gui.disable();
 		channel.broadcast(new DeliveryAddressDone(billingInfo, id));
 		synchronized (lock) {

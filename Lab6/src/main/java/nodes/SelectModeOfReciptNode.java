@@ -50,6 +50,8 @@ public class SelectModeOfReciptNode extends AbstractNode {
 	
 	@Override
 	public void next() {
+		super.next();
+		
 		gui.disable();
 		channel.broadcast(new SelectModeOfReciptDone(billingInfo, delivery, id));
 		synchronized (lock) {

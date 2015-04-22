@@ -28,5 +28,16 @@ public class Main {
 		new GUI("DeliveryAddress", new DeliveryAddressNode(channel, true, () -> 3000));
 		
 		channel.broadcast(new Start(0));
+	
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			System.out.println("Saving log...");
+			DroolsManager.getInstance().insert(new Message());
+			DroolsManager.getInstance().setRunning(false);
+			try {
+				DroolsManager.getInstance().join();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}));
 	}
 }

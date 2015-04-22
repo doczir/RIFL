@@ -25,21 +25,19 @@ public class ProcessPaymentNode extends AbstractNode {
 	}
 
 	@Override
-	protected void processMessage(Object message) throws InterruptedException {
-		if(automatic) 
-			Thread.sleep(delay.getAsInt());
+	protected void processMessage(Object message) {
 		PaymentInfoNodeDone msg = (PaymentInfoNodeDone) message;
 		id = msg.getId();
 		gui.enable();
 		billingInfo = msg.getBillingInfo();
 		NodeBehavior.processPaymentBehavior(billingInfo);
 		gui.notify(null, billingInfo);
-		if(automatic) 
-			next();
 	}	
 
 	@Override
 	public void next() {
+		super.next();
+		
 		gui.disable();
 		channel.broadcast(new ProcessPaymentNodeDone(billingInfo, id));
 		synchronized (lock) {

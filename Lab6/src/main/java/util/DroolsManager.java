@@ -4,6 +4,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.kie.api.KieServices;
+import org.kie.api.logger.KieRuntimeLogger;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 
@@ -15,7 +16,11 @@ public class DroolsManager extends Thread {
 	private KieContainer kContainer;
 	private KieSession kSession;
 	
+	public static long epoch = 0;
+	
 	private boolean running = true;
+
+	private KieRuntimeLogger logger;
 	
 	private static DroolsManager instance = null;
 	
@@ -23,6 +28,7 @@ public class DroolsManager extends Thread {
 	public static synchronized DroolsManager getInstance() {
 		if (instance == null) {
 			instance = new DroolsManager();
+			instance.start();
 		}
 		
 		return instance;
@@ -38,6 +44,10 @@ public class DroolsManager extends Thread {
         ks = KieServices.Factory.get();
 	    kContainer = ks.getKieClasspathContainer();
     	kSession = kContainer.newKieSession("ksession-rules");
+    	
+    	logger = ks.getLoggers().newFileLogger(kSession, "logs/myHelloWorld");
+    	
+    	epoch = System.nanoTime();
 	}
 	
 	@Override
@@ -45,6 +55,7 @@ public class DroolsManager extends Thread {
 		super.run();
 		
 		Message message = null;
+		System.out.println("Starting dm");
 		while (running) {
 			try {
 				message = queue.take();
@@ -55,6 +66,8 @@ public class DroolsManager extends Thread {
 				e.printStackTrace();
 			}
 		}
+		
+		logger.close();
 	}
 	
 	public void insert(Message msg) {
