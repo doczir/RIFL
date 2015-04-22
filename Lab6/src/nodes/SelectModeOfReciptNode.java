@@ -18,10 +18,11 @@ public class SelectModeOfReciptNode extends AbstractNode {
 
 	private boolean delivery;
 	private BillingInfo billingInfo;
-
+	private double dir;
 	
-	public SelectModeOfReciptNode(Channel channel, boolean automatic, IntSupplier delay) {
+	public SelectModeOfReciptNode(Channel channel, boolean automatic, IntSupplier delay, double dir) {
 		super(channel, automatic, delay);
+		this.dir = dir;
 	}
 
 	@Override
@@ -38,6 +39,11 @@ public class SelectModeOfReciptNode extends AbstractNode {
 		gui.enable();
 		
 		billingInfo = msg.getBillingInfo();
+		
+		if(Math.random() > dir) 
+			setReceiptDelivery();
+		else 
+			setReceiptInPersonal();
 
 		gui.notify(null, billingInfo);
 	}

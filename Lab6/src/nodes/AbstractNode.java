@@ -16,10 +16,10 @@ public abstract class AbstractNode implements Node {
 	protected Channel channel;
 	protected BlockingQueue<Object> queue;
 	protected Object lock;
-	private boolean automatic;
 	private IntSupplier delay;
 
 	protected int id;
+	protected boolean automatic;
 
 	public AbstractNode(Channel channel, boolean automatic, IntSupplier delay) {
 		this.channel = channel;
@@ -33,9 +33,14 @@ public abstract class AbstractNode implements Node {
 		new Thread(() -> {
 			while (true) {
 				try {
-					if(automatic) 
-						Thread.sleep(delay.getAsInt());
-					processMessage(nextMessage());
+					Object nextMessage = nextMessage();
+					if(automatic) { 
+						int d = delay.getAsInt();
+						if(BillingInfoNode.class.isInstance(this))
+							System.out.println(d);
+						Thread.sleep(d);
+					}
+					processMessage(nextMessage);
 					if(automatic)
 						next();
 				} catch (Exception e1) {
