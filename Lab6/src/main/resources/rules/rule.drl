@@ -1,6 +1,7 @@
 //created on: 2015.04.22.
 package rules
 
+import java.lang.*;
 import util.Message;
 import nodes.*;
 //list any import classes here.
@@ -9,20 +10,68 @@ import nodes.*;
 
 //declare any global variables here
 
-
+declare Message
+	@role( event )
+	@timestamp( timestamp )
+end
 
 
 rule "Rule 1 : JOIN"
 
     when
-    	$endBIN : Message ($senderBIN: sender, type == Message.TYPE_PROCESSING_END, $tsBIN : timestamp, $idBIN : id)
-    		eval ($senderBIN == BillingInfoNode.class)
+    	$endBIN : Message (sender == BillingInfoNode.class, $durationBIN : dur, $idBIN : id)
 
-    	$endPRN : Message ($senderPRN: sender, type == Message.TYPE_PROCESSING_END, $tsPRN : timestamp, $idPRN : id)
-    		eval ($senderPRN == ProcessReservationNode.class)
+    	$endPRN : Message (sender == ProcessReservationNode.class, $durationPRN : dur, $idPRN : id)
     	
     	eval ($idBIN == $idPRN)
-    	eval (Math.abs($tsBIN - $tsPRN) > 5000)
+    	eval (Math.abs($durationBIN - $durationPRN) > 5000)
     then
-		System.out.println("Slow join!!!!");
+		System.out.println("Lassú join!");
+end
+
+
+rule "Rule 2"
+	when
+		$countSMORN : Number() from accumulate( $m1 : Message(sender == SelectModeOfReciptNode.class) over window:time(30s), count($m1))
+		$countDAN : Number() from accumulate( $m2 : Message(sender == DeliveryAddressNode.class) over window:time(30s), count($m2))
+
+		eval (($countSMORN.longValue() - $countDAN.longValue()) * 2 < $countDAN.longValue())
+	then
+		System.out.println("Sok a házhozszállítás! SZÁ: " + ($countSMORN.longValue() - $countDAN.longValue()) + ", HSZ: " + $countDAN.longValue());
+end
+
+
+rule "Rule 3"
+	when
+		Message(sender == TravelInfoNode.class, $durLast : dur) over window:length(1)
+
+		accumulate ( 
+			$m : Message(sender == TravelInfoNode.class, $dur : dur) over window:time(30s),
+			$avg : average($dur), $cnt : count($m) 
+		)
+		
+		
+//		eval ($cnt.longValue() == 10)
+		eval ($avg.doubleValue()*2 < $durLast)
+		
+	then
+		System.out.println("Lassú végrehajtás!::" + $avg + "::" + $durLast);
+end
+
+
+rule "Rule 4"
+	when
+		Message($senderLast : sender, $durLast : dur) over window:length(1)
+
+		accumulate ( 
+			$m : Message(sender == $senderLast, $dur : dur) over window:time(30s),
+			$avg : average($dur), $cnt : count($m) 
+		)
+		
+		
+//		eval ($cnt.longValue() == 10)
+		eval ($avg.doubleValue()*2 < $durLast)
+		
+	then
+		System.out.println("Lassú végrehajtás (ált)!::" + $senderLast + "::" + $cnt + "::" + $avg + "::" + $durLast);
 end

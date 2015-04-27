@@ -24,6 +24,9 @@ public abstract class AbstractNode implements Node {
 
 	protected int id;
 	protected boolean automatic;
+	
+	protected Message message = null;
+	
 
 	public AbstractNode(Channel channel, boolean automatic, IntSupplier delay) {
 		this.channel = channel;
@@ -39,7 +42,8 @@ public abstract class AbstractNode implements Node {
 				try {
 					Object nextMessage = nextMessage();
 					
-					DroolsManager.getInstance().insert(new Message(getId(nextMessage), AbstractNode.this.getClass(), Message.TYPE_PROCESSING_START, System.nanoTime()));
+					//DroolsManager.getInstance().insert();
+					message = new Message(getId(nextMessage), AbstractNode.this.getClass(), System.currentTimeMillis());
 					
 					if (automatic) {
 						Thread.sleep(delay.getAsInt());
@@ -104,7 +108,8 @@ public abstract class AbstractNode implements Node {
 
 	@Override
 	public void next() {
-		DroolsManager.getInstance().insert(new Message(id, AbstractNode.this.getClass(), Message.TYPE_PROCESSING_END, System.nanoTime()));
+		message.setDur(System.currentTimeMillis() - message.getTimestamp());
+		DroolsManager.getInstance().insert(message);
 	}
 	
 	protected int getId(Object message) {

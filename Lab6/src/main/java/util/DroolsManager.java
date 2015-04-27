@@ -16,8 +16,6 @@ public class DroolsManager extends Thread {
 	private KieContainer kContainer;
 	private KieSession kSession;
 	
-	public static long epoch = 0;
-	
 	private boolean running = true;
 
 	private KieRuntimeLogger logger;
@@ -46,8 +44,6 @@ public class DroolsManager extends Thread {
     	kSession = kContainer.newKieSession("ksession-rules");
     	
     	logger = ks.getLoggers().newFileLogger(kSession, "logs/myHelloWorld");
-    	
-    	epoch = System.nanoTime();
 	}
 	
 	@Override
