@@ -10,11 +10,11 @@ public class Message {
 	
 	public Message() {}
 
-	public Message(int id, Class<?> sender, long timestamp) {
+	public Message(int id, Class<?> sender) {
 		super();
 		this.id = id;
 		this.sender = sender;
-		this.timestamp = timestamp;
+		this.timestamp = -1L;
 		this.dur = 0L;
 	}
 
@@ -40,8 +40,8 @@ public class Message {
 		return dur;
 	}
 
-	public void setDur(long duration) {
-		this.dur = duration;
+	public void setDur(long dur) {
+		this.dur = dur;
 	}
 
 	@Override

@@ -41,9 +41,9 @@ public abstract class AbstractNode implements Node {
 			while (true) {
 				try {
 					Object nextMessage = nextMessage();
-					
-					//DroolsManager.getInstance().insert();
-					message = new Message(getId(nextMessage), AbstractNode.this.getClass(), System.currentTimeMillis());
+
+					message = new Message(getId(nextMessage), AbstractNode.this.getClass());
+					DroolsManager.getInstance().insertMessage(message);
 					
 					if (automatic) {
 						Thread.sleep(delay.getAsInt());
@@ -109,7 +109,7 @@ public abstract class AbstractNode implements Node {
 	@Override
 	public void next() {
 		message.setDur(System.currentTimeMillis() - message.getTimestamp());
-		DroolsManager.getInstance().insert(message);
+		DroolsManager.getInstance().updateMessage(message);
 	}
 	
 	protected int getId(Object message) {

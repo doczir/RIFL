@@ -20,9 +20,9 @@ public class Main {
 		
 		
 		new GUI("TravelInfoNode", new TravelInfoNode(channel, false, () -> 0));
-		new GUI("ProcessReservationNode", new ProcessReservationNode(channel, true, () -> 100));
+		new GUI("ProcessReservationNode", new ProcessReservationNode(channel, true, () -> 1000));
 //		new GUI("BillingInfoNode", new BillingInfoNode(channel, true, () -> (int) (Math.pow(Math.random(), 40) * 10000.0)));
-		new GUI("BillingInfoNode", new BillingInfoNode(channel, true, () -> 700));
+		new GUI("BillingInfoNode", new BillingInfoNode(channel, true, () -> 1000));
 
 		new GUI("PaymentInfoNode", new PaymentInfoNode(channel, true, () -> 200));
 		new GUI("ProcessPaymentNode", new ProcessPaymentNode(channel, true, () -> 100));
@@ -33,8 +33,11 @@ public class Main {
 	
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			System.out.println("Saving log...");
-			DroolsManager.getInstance().insert(new Message());
+
 			DroolsManager.getInstance().setRunning(false);
+			
+			DroolsManager.getInstance().insertMessage(new Message());
+
 			try {
 				DroolsManager.getInstance().join();
 			} catch (Exception e) {

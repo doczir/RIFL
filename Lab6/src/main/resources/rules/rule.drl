@@ -13,18 +13,25 @@ import nodes.*;
 declare Message
 	@role( event )
 	@timestamp( timestamp )
+	@duration ( dur )
 end
 
+
+rule "Log"
+	when
+		Message($sender : sender, $id : id, $timestamp : timestamp, $duration : dur, dur > 0)
+	then
+		//System.out.println("Message => (Sender: " + $sender + ", Id: " + $id + ", timestamp: " + $timestamp + ", duration: " + $duration + ")");
+end
 
 rule "Rule 1 : JOIN"
 
     when
-    	$endBIN : Message (sender == BillingInfoNode.class, $durationBIN : dur, $idBIN : id)
+   		$endBIN : Message (sender == BillingInfoNode.class, dur > 0, $idBIN : id, $finishedAtBIN : (timestamp+dur))
 
-    	$endPRN : Message (sender == ProcessReservationNode.class, $durationPRN : dur, $idPRN : id)
-    	
-    	eval ($idBIN == $idPRN)
-    	eval (Math.abs($durationBIN - $durationPRN) > 5000)
+		Message (sender == ProcessReservationNode.class, id == $idBIN, dur > 0, $finishedAtPRN : (timestamp+dur))
+		eval(Math.abs($finishedAtPRN - $finishedAtBIN) > 5000)
+
     then
 		System.out.println("Lassú join!");
 end
@@ -32,8 +39,8 @@ end
 
 rule "Rule 2"
 	when
-		$countSMORN : Number() from accumulate( $m1 : Message(sender == SelectModeOfReciptNode.class) over window:time(30s), count($m1))
-		$countDAN : Number() from accumulate( $m2 : Message(sender == DeliveryAddressNode.class) over window:time(30s), count($m2))
+		$countSMORN : Number() from accumulate( $m1 : Message(sender == SelectModeOfReciptNode.class, dur > 0) over window:time(30s), count($m1))
+		$countDAN : Number() from accumulate( $m2 : Message(sender == DeliveryAddressNode.class, dur > 0) over window:time(30s), count($m2))
 
 		eval (($countSMORN.longValue() - $countDAN.longValue()) * 2 < $countDAN.longValue())
 	then
@@ -43,10 +50,10 @@ end
 
 rule "Rule 3"
 	when
-		Message(sender == TravelInfoNode.class, $durLast : dur) over window:length(1)
+		Message(sender == TravelInfoNode.class, $durLast : dur, dur > 0) over window:length(1)
 
 		accumulate ( 
-			$m : Message(sender == TravelInfoNode.class, $dur : dur) over window:time(30s),
+			$m : Message(sender == TravelInfoNode.class, $dur : dur, dur > 0) over window:time(30s),
 			$avg : average($dur), $cnt : count($m) 
 		)
 		
@@ -61,10 +68,10 @@ end
 
 rule "Rule 4"
 	when
-		Message($senderLast : sender, $durLast : dur) over window:length(1)
+		Message($senderLast : sender, $durLast : dur, dur > 0) over window:length(1)
 
 		accumulate ( 
-			$m : Message(sender == $senderLast, $dur : dur) over window:time(30s),
+			$m : Message(sender == $senderLast, $dur : dur, dur > 0) over window:time(30s),
 			$avg : average($dur), $cnt : count($m) 
 		)
 		

@@ -1,5 +1,7 @@
 package util;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -7,6 +9,7 @@ import org.kie.api.KieServices;
 import org.kie.api.logger.KieRuntimeLogger;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.rule.FactHandle;
 
 
 public class DroolsManager extends Thread {
@@ -16,9 +19,11 @@ public class DroolsManager extends Thread {
 	private KieContainer kContainer;
 	private KieSession kSession;
 	
+	private long lastTS;
 	private boolean running = true;
 
 	private KieRuntimeLogger logger;
+	private Map<Message, FactHandle> factHandles;
 	
 	private static DroolsManager instance = null;
 	
@@ -35,8 +40,15 @@ public class DroolsManager extends Thread {
 
 	private DroolsManager() {
 		queue = new LinkedBlockingQueue<Message>();
+		factHandles = new HashMap<Message, FactHandle>();
 		
+		lastTS = -1L;
 		running = true;
+	}
+	
+	@Override
+	public void run() {
+		super.run();
 		
         // load up the knowledge base
         ks = KieServices.Factory.get();
@@ -44,11 +56,7 @@ public class DroolsManager extends Thread {
     	kSession = kContainer.newKieSession("ksession-rules");
     	
     	logger = ks.getLoggers().newFileLogger(kSession, "logs/myHelloWorld");
-	}
-	
-	@Override
-	public void run() {
-		super.run();
+
 		
 		Message message = null;
 		System.out.println("Starting dm");
@@ -56,7 +64,14 @@ public class DroolsManager extends Thread {
 			try {
 				message = queue.take();
 				
-				kSession.insert(message);
+				if (factHandles.containsKey(message)) {
+					// Ha frissíteni kell az eseményt
+					kSession.update(factHandles.get(message), message);
+				} else {
+					// Ha be kell szúrni egy új eseményt
+					factHandles.put(message, kSession.insert(message));
+				}
+
 				kSession.fireAllRules();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -66,12 +81,34 @@ public class DroolsManager extends Thread {
 		logger.close();
 	}
 	
-	public void insert(Message msg) {
+	public synchronized void insertMessage(Message message) {
 		try {
-			queue.put(msg);
+			message.setTimestamp(getUniqueTS());
+			
+			queue.put(message);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public synchronized void updateMessage(Message message) {
+		try {
+			queue.put(message);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private long getUniqueTS() {
+		long ts = System.currentTimeMillis();
+		
+		while (ts <= lastTS) {
+			ts++;
+		}
+		
+		lastTS = ts;
+		
+		return ts;
 	}
 	
 	public synchronized boolean isRunning() {
