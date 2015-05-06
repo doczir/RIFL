@@ -39,7 +39,7 @@ public class StatCollector {
 			String[] header = new String[keySet.size()];
 			keySet.toArray(header);
 
-			System.out.println(String.join(";", header));
+			//System.out.println(String.join(";", header));
 			writer.append(String.join(";", header));
 			writer.append("\n");
 
@@ -53,7 +53,7 @@ public class StatCollector {
 				values.stream().map(f -> f == null ? "0" : f.toString())
 						.collect(Collectors.toList()).toArray(valuesArray);
 
-				System.out.println(String.join(";", valuesArray));
+				//System.out.println(String.join(";", valuesArray));
 				writer.append(String.join(";", valuesArray));
 				writer.append("\n");
 			}
