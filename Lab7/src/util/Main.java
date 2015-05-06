@@ -19,7 +19,7 @@ public class Main {
 		Channel channel = new Channel();
 		
 		
-		new GUI("TravelInfoNode", new TravelInfoNode(channel, false, () -> 0));
+		new GUI("TravelInfoNode", new TravelInfoNode(channel, true, () -> 0));
 		new GUI("ProcessReservationNode", new ProcessReservationNode(channel, true, () -> 1000));
 //		new GUI("BillingInfoNode", new BillingInfoNode(channel, true, () -> (int) (Math.pow(Math.random(), 40) * 10000.0)));
 		new GUI("BillingInfoNode", new BillingInfoNode(channel, true, () -> 1000));
@@ -29,7 +29,12 @@ public class Main {
 		new SMORGUI("SelectModeOfReciptNode", new SelectModeOfReciptNode(channel, true, () -> 200, 0.4));
 		new GUI("DeliveryAddress", new DeliveryAddressNode(channel, true, () -> 300));
 		
-		channel.broadcast(new Start(0));
+		for (int i = 0; i < 10; i++) {
+			channel.broadcast(new Start(i));			
+		}
+		//	Thread.sleep(1000);
+		//StatCollector.flush();
+		Runtime.getRuntime().addShutdownHook(new Thread(StatCollector::flush));
 	
 	}
 }

@@ -4,6 +4,7 @@ import java.util.function.IntSupplier;
 
 import model.TravelInfo;
 import util.NodeBehavior;
+import util.StatCollector;
 import channel.BaseMessage;
 import channel.Channel;
 
@@ -37,7 +38,7 @@ public class TravelInfoNode extends AbstractNode {
 		super.next();
 
 		channel.broadcast(new TravelInfoNodeDone(travelInfo, id));
-		channel.broadcast(new Start(++i));
+		//channel.broadcast(new Start(++i));
 		synchronized (lock) {
 			lock.notify();
 		}

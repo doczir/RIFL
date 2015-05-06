@@ -5,6 +5,7 @@ import java.util.function.IntSupplier;
 import model.TravelInfo;
 import nodes.TravelInfoNode.TravelInfoNodeDone;
 import util.NodeBehavior;
+import util.StatCollector;
 import channel.BaseMessage;
 import channel.Channel;
 

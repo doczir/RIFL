@@ -8,7 +8,7 @@ import java.util.function.IntSupplier;
 import java.util.logging.Logger;
 
 import node.Node;
-import util.Message;
+import util.StatCollector;
 import channel.BaseMessage;
 import channel.Channel;
 
@@ -23,8 +23,6 @@ public abstract class AbstractNode implements Node {
 
 	protected int id;
 	protected boolean automatic;
-	
-	protected Message message = null;
 	
 
 	public AbstractNode(Channel channel, boolean automatic, IntSupplier delay) {
@@ -41,10 +39,9 @@ public abstract class AbstractNode implements Node {
 				try {
 					Object nextMessage = nextMessage();
 
-					message = new Message(getId(nextMessage), AbstractNode.this.getClass());
-					
 					if (automatic) {
-						Thread.sleep(delay.getAsInt());
+//						Thread.sleep(delay.getAsInt());
+						StatCollector.addDataPoint(getId(nextMessage), this.getClass().getSimpleName(), delay.getAsInt());
 					}
 					processMessage(nextMessage);
 					if (automatic) {
@@ -106,7 +103,6 @@ public abstract class AbstractNode implements Node {
 
 	@Override
 	public void next() {
-		message.setDur(System.currentTimeMillis() - message.getTimestamp());
 	}
 	
 	protected int getId(Object message) {
